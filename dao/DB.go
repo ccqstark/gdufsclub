@@ -1,0 +1,52 @@
+package dao
+
+//管理gorm数据库连接池的初始化工作。
+import (
+	"fmt"
+	"github.com/ccqstark/gdufsclub/util"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
+)
+
+//定义全局的db对象
+var _db *gorm.DB
+
+//包初始化,建立数据库连接
+func init() {
+	//从配置文件加载
+	cfg, err := util.LoadConfig("./config/conf.json")
+	if err != nil {
+		panic(err.Error())
+	}
+	database := cfg.Database
+
+	//dsn配置
+	username := database.Username //账号
+	password := database.Password //密码
+	host := database.Host         //数据库地址
+	port := database.Port         //数据库端口
+	dbname := database.DBName     //数据库名
+	timeout := database.Timeout   //连接超时时间
+	password = "Fuckingsafe"+password+"410"
+
+	//拼接dsn参数
+	dsn := fmt.Sprintf("%scrud:%s!!@tcp(%s:%d)/%sdb?charset=utf8&parseTime=True&loc=Local&timeout=%s", username, password+"!", host, port, dbname, timeout)
+
+	//连接MYSQL, 获得DB类型实例，用于后面的数据库读写操作。
+	_db, err = gorm.Open("mysql", dsn)
+	if err != nil {
+		panic("连接数据库失败, error=" + err.Error())
+	}
+
+	//取消表名复数
+	_db.SingularTable(true)
+
+	//设置数据库连接池参数
+	_db.DB().SetMaxOpenConns(1000) //设置数据库连接池最大连接数
+	_db.DB().SetMaxIdleConns(100)  //连接池最大允许的空闲连接数，如果没有sql任务需要执行的连接数大于这个数，超过的连接会被连接池关闭。
+}
+
+//获取gorm db对象
+func GetDB() *gorm.DB {
+	return _db
+}
