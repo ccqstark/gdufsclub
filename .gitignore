@@ -1,5 +1,7 @@
 #config file
 *.json
+#
+*.log
 
 # Binaries for programs and plugins
 *.exe

@@ -7,16 +7,11 @@ import (
 
 func main() {
 	//加载配置
-	cfg, err :=util.LoadConfig("./config/conf.json")
-	if err != nil {
-		panic(err.Error())
-	}
-
 	//加载并启动路由
 	r := router.LoadRouter()
 
 
-	r.Run(":"+cfg.AppPort)  //:::8060
+	r.Run(":"+util.Cfg.AppPort)  //:::8060
 
 }
 

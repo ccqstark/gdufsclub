@@ -13,25 +13,21 @@ var _db *gorm.DB
 
 //包初始化,建立数据库连接
 func init() {
-	//从配置文件加载
-	cfg, err := util.LoadConfig("./config/conf.json")
-	if err != nil {
-		panic(err.Error())
-	}
-	database := cfg.Database
-
+	//加载全局配置
+	databaseConf := util.Cfg.Database
 	//dsn配置
-	username := database.Username //账号
-	password := database.Password //密码
-	host := database.Host         //数据库地址
-	port := database.Port         //数据库端口
-	dbname := database.DBName     //数据库名
-	timeout := database.Timeout   //连接超时时间
-	password = "Fuckingsafe"+password+"410"
+	username := databaseConf.Username //账号
+	password := databaseConf.Password //密码
+	host := databaseConf.Host         //数据库地址
+	port := databaseConf.Port         //数据库端口
+	dbname := databaseConf.DBName     //数据库名
+	timeout := databaseConf.Timeout   //连接超时时间
+	password = "Fuckingsafe" + password + "410"
 
 	//拼接dsn参数
 	dsn := fmt.Sprintf("%scrud:%s!!@tcp(%s:%d)/%sdb?charset=utf8&parseTime=True&loc=Local&timeout=%s", username, password+"!", host, port, dbname, timeout)
 
+	var err error
 	//连接MYSQL, 获得DB类型实例，用于后面的数据库读写操作。
 	_db, err = gorm.Open("mysql", dsn)
 	if err != nil {

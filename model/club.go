@@ -1,5 +1,9 @@
 package model
 
+import (
+	"github.com/ccqstark/gdufsclub/util"
+)
+
 type Club struct {
 	ClubID        int    `gorm:"primary_key"`
 	ClubName      string `gorm:"column:club_name" json:"club_name"`
@@ -10,16 +14,38 @@ type Club struct {
 	ClubPassword  string `gorm:"column:club_password" json:"club_password"`
 	TotalProgress int    `gorm:"column:total_progress" json:"total_progress"`
 	Logo          string `gorm:"column:logo"`
-	Pass          string `gorm:"column:pass"`
+	Pass          int    `gorm:"column:pass"`
 }
 
-func InsertNewClub(club *Club) bool {
+func InsertNewClub(club *Club) (int, bool) {
+	//md5加密
+	club.ClubPassword = util.Md5SaltCrypt(club.ClubPassword)
+	//插入记录
 	db.Create(&club)
 
-	//判断插入成功返回false
+	//获取刚刚插入的记录的id
+	var _id []int
+	db.Raw("select LAST_INSERT_ID() as id").Pluck("id", &_id)
+	id := _id[0]
+
+	//方法判断插入成功返回false
 	if !db.NewRecord(&club) {
+		return id, true
+	} else {
+		return 0, false
+	}
+}
+
+//判断账户名重复与否
+func IsAccountRepeat(accountStr string) bool {
+
+	var club Club
+	if db.Where("club_account=?", accountStr).Take(&club).RecordNotFound() {
+		//查询不到，不重复
+		return false
+	} else if club.ClubName != "" {
+		return true
+	} else {
 		return true
 	}
-	return false
-
 }
