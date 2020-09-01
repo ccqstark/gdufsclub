@@ -82,3 +82,13 @@ func UpdateTplProfile(id int, path string) bool {
 
 	return true
 }
+
+func UpdateTemplateInfo(tpl *Template) bool {
+
+	if result := db.Save(&tpl); result.Error != nil {
+		middleware.Log.Error(result.Error.Error())
+		return false
+	}
+
+	return true
+}

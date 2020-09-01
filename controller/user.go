@@ -19,7 +19,7 @@ func PickFirstUser(c *gin.Context) {
 
 func Demo(c *gin.Context){
 	session := sessions.Default(c)
-	session.Set("user_id",66)
+	session.Set("user_id",65)
 	session.Save()
 	c.JSON(http.StatusOK, gin.H{
 		"code":200,

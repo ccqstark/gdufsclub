@@ -53,6 +53,7 @@ func LoadRouter() *gin.Engine {
 			v1Template.GET("",controller.GetTemplate)
 			v1Template.POST("/info",controller.CreateNewTemplate)
 			v1Template.POST("/profile",controller.UploadTplProfile)
+			v1Template.PUT("/info", controller.ModifyTemplate)
 		}
 
 

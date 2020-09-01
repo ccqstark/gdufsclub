@@ -3,7 +3,7 @@ package util
 import (
 	"bufio"
 	"encoding/json"
-	"github.com/ccqstark/gdufsclub/middleware"
+	"fmt"
 	"os"
 )
 
@@ -51,7 +51,6 @@ func init() {
 	reader := bufio.NewReader(file)
 	decoder := json.NewDecoder(reader)
 	if err = decoder.Decode(&Cfg); err != nil {
-		middleware.Log.Error(err.Error())
+		fmt.Println(err)
 	}
-
 }

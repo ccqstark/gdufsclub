@@ -31,13 +31,15 @@ func GetTemplate(c *gin.Context) {
 	if !model.IsTemplateExist(userID.(int)) {
 		//不存在
 		c.JSON(http.StatusOK, gin.H{
-			"code": 400,
+			"code": 401,
 			"msg":  "同学你还没有创建过模板噢",
 		})
 		return
 	}
 	//存在
 	if tpl, ok := model.QueryTemplate(userID.(int)); ok == true {
+		session.Set("template_id", tpl.TemplateID)
+		session.Save()
 		c.JSON(http.StatusOK, gin.H{
 			"code": 200,
 			"template": gin.H{
@@ -163,6 +165,54 @@ func UploadTplProfile(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
 			"msg":  "上传失败",
+		})
+	}
+}
+
+func ModifyTemplate(c *gin.Context) {
+
+	var tpl model.Template
+	if err := c.ShouldBind(&tpl); err != nil {
+		middleware.Log.Error(err.Error())
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "发生某种错误了呢",
+		})
+		return
+	}
+
+	session := sessions.Default(c)
+	TplId := session.Get("template_id")
+	userID := session.Get("user_id")
+	session.Save()
+
+	if userID == nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "暂未登录",
+		})
+		return
+	}
+
+	if TplId == nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "找不到此模板",
+		})
+		return
+	}
+
+	tpl.TemplateID = TplId.(int)
+	tpl.UserID = userID.(int)
+	if ok := model.UpdateTemplateInfo(&tpl); ok == true {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 200,
+			"msg":  "修改成功",
+		})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "修改失败",
 		})
 	}
 }
