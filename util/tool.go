@@ -3,6 +3,7 @@ package util
 import (
 	"crypto/md5"
 	"fmt"
+	"github.com/ccqstark/gdufsclub/middleware"
 	"os"
 )
 
@@ -18,6 +19,7 @@ func Md5SaltCrypt(str string) string {
 func IsExists(path string) bool {
 	_, err := os.Stat(path)    //os.Stat获取文件信息
 	if err != nil {
+		middleware.Log.Error(err.Error())
 		if os.IsExist(err) {
 			return true
 		}

@@ -9,6 +9,7 @@ var db *gorm.DB
 
 func init() {
 	db = dao.GetDB()
+
 }
 
 type User struct {

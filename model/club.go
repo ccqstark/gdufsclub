@@ -1,7 +1,14 @@
 package model
 
 import (
+	"errors"
+	"github.com/ccqstark/gdufsclub/middleware"
 	"github.com/ccqstark/gdufsclub/util"
+)
+
+var (
+	//ErrRecordNotFound record not found error
+	ErrRecordNotFound = errors.New("record not found")
 )
 
 type Club struct {
@@ -21,7 +28,10 @@ func InsertNewClub(club *Club) (int, bool) {
 	//md5加密
 	club.ClubPassword = util.Md5SaltCrypt(club.ClubPassword)
 	//插入记录
-	db.Create(&club)
+	if result := db.Create(&club); result.Error != nil {
+		middleware.Log.Error(result.Error.Error())
+		return 0, false
+	}
 
 	//获取刚刚插入的记录的id
 	var _id []int
@@ -40,20 +50,26 @@ func InsertNewClub(club *Club) (int, bool) {
 func IsAccountRepeat(accountStr string) bool {
 
 	var club Club
-	if db.Where("club_account=?", accountStr).Take(&club).RecordNotFound() {
-		//查询不到，不重复
+	// 检查错误是否为 RecordNotFound
+	err := db.Where("club_account=?", accountStr).Take(&club).Error
+	if errors.Is(err, ErrRecordNotFound) {
 		return false
-	} else if club.ClubName != "" {
-		return true
-	} else {
+	} else if err != nil {
+		middleware.Log.Error(err.Error())
 		return true
 	}
+
+	return true
 }
 
 //更新logo地址
-func UpdateLogo(id int,path string){
+func UpdateLogo(id int, path string) bool {
 
 	var club Club
-	db.Model(&club).Where("club_id=?",id).Update("logo",path)
+	if result := db.Model(&club).Where("club_id=?", id).Update("logo", path); result.Error != nil {
+		middleware.Log.Error(result.Error.Error())
+		return false
+	}
 
+	return true
 }

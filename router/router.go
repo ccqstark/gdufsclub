@@ -10,7 +10,7 @@ import (
 
 func LoadRouter() *gin.Engine {
 
-	r := gin.Default()
+	r:=gin.Default()
 
 	//session:创建基于cookie的存储引擎,添加密钥，并使用中间件
 	store := cookie.NewStore([]byte("wdnmd"))
@@ -18,6 +18,9 @@ func LoadRouter() *gin.Engine {
 
 	//日志中间件
 	r.Use(middleware.LoggerToFile())
+
+	//使用跨域中间件
+	r.Use(middleware.Cors())
 
 	//v1路由组
 	v1Group := r.Group("/v1")
@@ -34,6 +37,7 @@ func LoadRouter() *gin.Engine {
 		v1User := v1Group.Group("/user")
 		{
 			v1User.GET("/first", controller.PickFirstUser)
+			v1User.POST("/demo",controller.Demo)
 		}
 
 		//club
@@ -43,7 +47,13 @@ func LoadRouter() *gin.Engine {
 			v1Club.POST("/logo",controller.UploadClubLogo)
 		}
 
-
+		//template
+		v1Template:=v1Group.Group("/template")
+		{
+			v1Template.GET("",controller.GetTemplate)
+			v1Template.POST("/info",controller.CreateNewTemplate)
+			v1Template.POST("/profile",controller.UploadTplProfile)
+		}
 
 
 		//admin

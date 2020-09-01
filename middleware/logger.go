@@ -10,8 +10,11 @@ import (
 	"time"
 )
 
-// 日志记录到文件
-func LoggerToFile() gin.HandlerFunc {
+//全局logger
+var Log *logrus.Logger
+
+func init(){
+
 	//加载全局配置
 	loggerConf := util.Cfg.Logger
 	logFilePath := loggerConf.LogFilePath
@@ -27,19 +30,24 @@ func LoggerToFile() gin.HandlerFunc {
 	}
 
 	//实例化
-	logger := logrus.New()
+	Log = logrus.New()
 
 	//设置输出
-	logger.Out = src
+	Log.Out = src
 
 	//设置日志级别
-	logger.SetLevel(logrus.DebugLevel)
+	Log.SetLevel(logrus.TraceLevel)
 
 	//设置日志格式
-	logger.SetFormatter(&logrus.TextFormatter{
+	Log.SetFormatter(&logrus.TextFormatter{
 		//设置时间格式
 		TimestampFormat: "2006-01-02 15:04:05",
 	})
+}
+
+
+// 日志记录到文件
+func LoggerToFile() gin.HandlerFunc {
 
 	return func(c *gin.Context) {
 		// 开始时间
@@ -67,7 +75,7 @@ func LoggerToFile() gin.HandlerFunc {
 		clientIP := c.ClientIP()
 
 		// 日志格式
-		logger.Infof("| %3d | %13v | %15s | %s | %s |",
+		Log.Infof("| %3d | %13v | %15s | %s | %s |",
 			statusCode,
 			latencyTime,
 			clientIP,

@@ -3,6 +3,7 @@ package dao
 //管理gorm数据库连接池的初始化工作。
 import (
 	"fmt"
+	"github.com/ccqstark/gdufsclub/middleware"
 	"github.com/ccqstark/gdufsclub/util"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -31,7 +32,7 @@ func init() {
 	//连接MYSQL, 获得DB类型实例，用于后面的数据库读写操作。
 	_db, err = gorm.Open("mysql", dsn)
 	if err != nil {
-		panic("连接数据库失败, error=" + err.Error())
+		middleware.Log.Error("连接数据库失败, error=" + err.Error())
 	}
 
 	//取消表名复数
