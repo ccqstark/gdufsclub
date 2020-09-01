@@ -39,7 +39,8 @@ func LoadRouter() *gin.Engine {
 		//club
 		v1Club := v1Group.Group("/club")
 		{
-			v1Club.POST("", controller.SettleNewClub)
+			v1Club.POST("/info", controller.SettleNewClub)
+			v1Club.POST("/logo",controller.UploadClubLogo)
 		}
 
 

@@ -1,7 +1,14 @@
 #config file
 *.json
-#
+
+#log file
 *.log
+
+#image file
+*.jpg
+*.png
+*.gif
+*.jpeg
 
 # Binaries for programs and plugins
 *.exe

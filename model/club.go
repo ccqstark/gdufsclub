@@ -49,3 +49,11 @@ func IsAccountRepeat(accountStr string) bool {
 		return true
 	}
 }
+
+//更新logo地址
+func UpdateLogo(id int,path string){
+
+	var club Club
+	db.Model(&club).Where("club_id=?",id).Update("logo",path)
+
+}
