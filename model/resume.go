@@ -7,7 +7,7 @@ import (
 type Resume struct {
 	ResumeID    int    `gorm:"primary_key"`
 	SubmitterID int    `gorm:"column:submitter_id"`
-	ClubID      int    `gorm:"column:club_uid json:"club_id""`
+	ClubID      int    `gorm:"column:club_id" json:"club_id"`
 	Name        string `gorm:"column:name" json:"name"`
 	Sex         string `gorm:"column:sex" json:"sex"`
 	Class       string `gorm:"column:class" json:"class"`
@@ -18,7 +18,7 @@ type Resume struct {
 	Advantage   string `gorm:"column:advantage" json:"advantage"`
 	Self        string `gorm:"column:self" json:"self"`
 	Reason      string `gorm:"column:reason" json:"reason"`
-	Image       string `gorm:"column:image" json:"image"`
+	Image       string `gorm:"column:image"`
 	Extra       string `gorm:"column:extra" json:"extra"`
 }
 
@@ -57,7 +57,7 @@ func UpdateResumeProfile(id int, path string) bool {
 func QueryResume(userID int, clubID int) (Resume, bool) {
 
 	var resume Resume
-	if result := db.Where("user_id=? and club_id=?", userID, clubID).Take(&resume); result.Error != nil {
+	if result := db.Where("submitter_id=? and club_id=?", userID, clubID).Take(&resume); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return Resume{}, false
 	}
@@ -65,7 +65,7 @@ func QueryResume(userID int, clubID int) (Resume, bool) {
 	return resume, true
 }
 
-func UpdateResumeInfo(resume *Resume)bool{
+func UpdateResumeInfo(resume *Resume) bool {
 
 	if result := db.Save(&resume); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())

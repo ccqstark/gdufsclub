@@ -21,6 +21,7 @@ func FillNewResume(c *gin.Context) {
 	var resume model.Resume
 	if err := c.ShouldBind(&resume); err != nil {
 		middleware.Log.Error(err.Error())
+		fmt.Println(err)
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
 			"msg":  "发生某种错误了呢",
@@ -52,7 +53,7 @@ func FillNewResume(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
-			"msg":  "报名表已存在或提交失败，请重试",
+			"msg":  "报名表提交失败，请重试",
 		})
 	}
 }

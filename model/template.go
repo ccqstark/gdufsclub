@@ -1,7 +1,6 @@
 package model
 
 import (
-	"errors"
 	"github.com/ccqstark/gdufsclub/middleware"
 )
 
@@ -24,13 +23,8 @@ type Template struct {
 func IsTemplateExist(userID int) bool {
 
 	var tpl Template
-
 	// 检查错误是否为 RecordNotFound
-	err := db.Where("user_id=?", userID).Take(&tpl).Error
-	if errors.Is(err, ErrRecordNotFound) {
-		return false
-	} else if err != nil {
-		middleware.Log.Error(err.Error())
+	if db.Where("user_id=?", userID).Take(&tpl).RecordNotFound() {
 		return false
 	}
 
