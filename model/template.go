@@ -75,13 +75,14 @@ func InsertNewTemplate(tpl *Template) (int, bool) {
 func UpdateTplProfile(id int, path string) bool {
 
 	var tpl Template
-	if result := db.Model(&tpl).Where("template_id=?", id).Update("profile", path); result.Error != nil {
+	if result := db.Model(&tpl).Where("template_id=?", id).Update("template_image", path); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return false
 	}
 
 	return true
 }
+
 
 func UpdateTemplateInfo(tpl *Template) bool {
 

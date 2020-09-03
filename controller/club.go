@@ -35,16 +35,16 @@ func SettleNewClub(c *gin.Context) {
 	}
 
 	//插入数据
-	if clubId, ok := model.InsertNewClub(&club); ok == true {
+	if clubID, ok := model.InsertNewClub(&club); ok == true {
 		//club_id存入session
 		session := sessions.Default(c)
-		session.Set("club_id", clubId)
+		session.Set("club_id", clubID)
 		session.Save()
 
 		c.JSON(http.StatusOK, gin.H{
 			"code":    200,
 			"msg":     "申请提交成功，请耐心等待后台审核",
-			"club_id": clubId,
+			"club_id": clubID,
 		})
 	} else {
 		c.JSON(http.StatusOK, gin.H{
@@ -88,13 +88,15 @@ func UploadClubLogo(c *gin.Context) {
 		os.Mkdir(fileDir, os.ModePerm)
 	}
 
+	//保存至服务器指定目录
 	filepath := fmt.Sprintf("%s%s%s", fileDir, fileName, fileExt)
 	c.SaveUploadedFile(file, filepath)
+
 	//写入数据库
 	session := sessions.Default(c)
-	clubId := session.Get("club_id")
+	clubID := session.Get("club_id")
 	session.Save()
-	if clubId == nil {
+	if clubID == nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
 			"msg":  "未登录或找不到对应社团",
@@ -103,7 +105,7 @@ func UploadClubLogo(c *gin.Context) {
 	}
 
 	//插入数据库
-	if ok := model.UpdateLogo(clubId.(int), filepath); ok == false {
+	if ok := model.UpdateLogo(clubID.(int), filepath); ok == false {
 		//数据库出错
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,

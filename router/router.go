@@ -3,17 +3,19 @@ package router
 import (
 	"github.com/ccqstark/gdufsclub/controller"
 	"github.com/ccqstark/gdufsclub/middleware"
+	"github.com/ccqstark/gdufsclub/util"
 	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/cookie"
+	"github.com/gin-contrib/sessions/redis"
 	"github.com/gin-gonic/gin"
 )
 
 func LoadRouter() *gin.Engine {
 
-	r:=gin.Default()
+	r := gin.Default()
 
-	//session:创建基于cookie的存储引擎,添加密钥，并使用中间件
-	store := cookie.NewStore([]byte("wdnmd"))
+	//session:创建基于redis的存储引擎,添加密钥，并使用中间件
+	redisConf := util.Cfg.Redis
+	store, _ := redis.NewStore(redisConf.IdleConnection, redisConf.Protocol, redisConf.HostPort, redisConf.Password, []byte(redisConf.Key))
 	r.Use(sessions.Sessions("mysession", store))
 
 	//日志中间件
@@ -37,25 +39,42 @@ func LoadRouter() *gin.Engine {
 		v1User := v1Group.Group("/user")
 		{
 			v1User.GET("/first", controller.PickFirstUser)
-			v1User.POST("/demo",controller.Demo)
+			v1User.POST("/demo", controller.Demo)
 		}
 
 		//club
 		v1Club := v1Group.Group("/club")
 		{
 			v1Club.POST("/info", controller.SettleNewClub)
-			v1Club.POST("/logo",controller.UploadClubLogo)
+			v1Club.POST("/logo", controller.UploadClubLogo)
 		}
 
 		//template
-		v1Template:=v1Group.Group("/template")
+		v1Template := v1Group.Group("/template")
 		{
-			v1Template.GET("",controller.GetTemplate)
-			v1Template.POST("/info",controller.CreateNewTemplate)
-			v1Template.POST("/profile",controller.UploadTplProfile)
+			v1Template.GET("", controller.GetTemplate)
+			v1Template.POST("/info", controller.CreateNewTemplate)
+			v1Template.POST("/profile", controller.UploadTplProfile)
 			v1Template.PUT("/info", controller.ModifyTemplate)
 		}
 
+		//resume
+		v1Resume := v1Group.Group("/resume")
+		{
+			v1Resume.GET("/:club_id", controller.GetResume)
+			v1Resume.POST("/info", controller.FillNewResume)
+			v1Resume.POST("/profile", controller.UploadResumeProfile)
+			v1Resume.PUT("/info",controller.ModifyResume)
+		}
+
+		//style
+		//v1Style :=v1Group.Group("/style")
+		//{
+		//	v1Style.GET("",)
+		//	v1Style.GET()
+		//	v1Style.POST("")
+		//	v1Style.PUT()
+		//}
 
 		//admin
 		v1Admin := v1Group.Group("/admin")

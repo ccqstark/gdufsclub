@@ -10,66 +10,16 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"strconv"
 	"strings"
 	"time"
 )
 
-//获得模板
-func GetTemplate(c *gin.Context) {
+//填写新的报名简历
+func FillNewResume(c *gin.Context) {
 
-	session := sessions.Default(c)
-	userID := session.Get("user_id")
-	session.Save()
-	if userID == nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code": 400,
-			"msg":  "暂未登录",
-		})
-		return
-	}
-
-	//模板是否存在
-	if !model.IsTemplateExist(userID.(int)) {
-		//不存在
-		c.JSON(http.StatusOK, gin.H{
-			"code": 401,
-			"msg":  "同学你还没有创建过模板噢",
-		})
-		return
-	}
-	//存在
-	if tpl, ok := model.QueryTemplate(userID.(int)); ok == true {
-		//设置session:获取到的template的id
-		session.Set("template_id", tpl.TemplateID)
-		session.Save()
-		c.JSON(http.StatusOK, gin.H{
-			"code": 200,
-			"template": gin.H{
-				"name":      tpl.TemplateName,
-				"class":     tpl.TemplateClass,
-				"sex":       tpl.TemplateSex,
-				"wechat":    tpl.TemplateWechat,
-				"email":     tpl.TemplateEmail,
-				"phone":     tpl.TemplatePhone,
-				"hobby":     tpl.TemplateHobby,
-				"self":      tpl.TemplateSelf,
-				"advantage": tpl.TemplateAdvantage,
-				"image":     tpl.TemplateImage,
-			},
-		})
-	} else {
-		c.JSON(http.StatusOK, gin.H{
-			"code": 400,
-			"msg":  "模板获取失败",
-		})
-	}
-}
-
-//创建新模板
-func CreateNewTemplate(c *gin.Context) {
-
-	var tpl model.Template
-	if err := c.ShouldBind(&tpl); err != nil {
+	var resume model.Resume
+	if err := c.ShouldBind(&resume); err != nil {
 		middleware.Log.Error(err.Error())
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
@@ -79,9 +29,9 @@ func CreateNewTemplate(c *gin.Context) {
 	}
 
 	session := sessions.Default(c)
-	userID := session.Get("user_id")
+	submitterID := session.Get("user_id")
 	session.Save()
-	if userID == nil {
+	if submitterID == nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
 			"msg":  "暂未登录",
@@ -89,26 +39,26 @@ func CreateNewTemplate(c *gin.Context) {
 		return
 	}
 
-	tpl.UserID = userID.(int)
-	if tplID, ok := model.InsertNewTemplate(&tpl); ok == true {
-		session.Set("template_id", tplID)
+	resume.SubmitterID = submitterID.(int)
+	if resumeID, ok := model.InsertNewResume(&resume); ok == true {
+		session.Set("resume_id", resumeID)
 		session.Save()
 
 		c.JSON(http.StatusOK, gin.H{
-			"code":        200,
-			"msg":         "模板创建成功",
-			"template_id": tplID,
+			"code":      200,
+			"msg":       "报名表提交成功",
+			"resume_id": resumeID,
 		})
 	} else {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
-			"msg":  "模板已存在或创建失败，请重试",
+			"msg":  "报名表已存在或提交失败，请重试",
 		})
 	}
 }
 
-//上传模板头像
-func UploadTplProfile(c *gin.Context) {
+//上传报名表照片
+func UploadResumeProfile(c *gin.Context) {
 
 	imageConf := util.Cfg.Image
 	file, err := c.FormFile("profile")
@@ -147,17 +97,17 @@ func UploadTplProfile(c *gin.Context) {
 
 	//写入数据库
 	session := sessions.Default(c)
-	tplID := session.Get("template_id")
+	resumeID := session.Get("resume_id")
 	session.Save()
-	if tplID == nil {
+	if resumeID == nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
-			"msg":  "找不到当前模板",
+			"msg":  "找不到当前报名表",
 		})
 		return
 	}
 
-	if ok := model.UpdateTplProfile(tplID.(int), filepath); ok == true {
+	if ok := model.UpdateResumeProfile(resumeID.(int), filepath); ok == true {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 200,
 			"msg":  "上传成功!",
@@ -173,10 +123,60 @@ func UploadTplProfile(c *gin.Context) {
 	}
 }
 
-func ModifyTemplate(c *gin.Context) {
+//获取报名表
+func GetResume(c *gin.Context) {
 
-	var tpl model.Template
-	if err := c.ShouldBind(&tpl); err != nil {
+	clubIDStr := c.Param("club_id")
+	clubID, err := strconv.Atoi(clubIDStr)
+	if err != nil {
+		middleware.Log.Error(err.Error())
+	}
+
+	session := sessions.Default(c)
+	userID := session.Get("user_id")
+	session.Save()
+	if userID == nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "暂未登录",
+		})
+		return
+	}
+
+	if resume, ok := model.QueryResume(userID.(int), clubID); ok == true {
+		//设置session:获取到的resume的id
+		session.Set("resume_id", resume.ResumeID)
+		session.Set("resume_club_id", resume.ClubID)
+		session.Save()
+		c.JSON(http.StatusOK, gin.H{
+			"code": 200,
+			"resume": gin.H{
+				"name":      resume.Name,
+				"sex":       resume.Sex,
+				"class":     resume.Class,
+				"phone":     resume.Phone,
+				"email":     resume.Email,
+				"wechat":    resume.Wechat,
+				"hobby":     resume.Hobby,
+				"advantage": resume.Advantage,
+				"self":      resume.Self,
+				"reason":    resume.Reason,
+				"image":     resume.Image,
+				"extra":     resume.Extra,
+			},
+		})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 401,
+			"msg":  "还未向此社团提交过报名表",
+		})
+	}
+}
+
+func ModifyResume(c *gin.Context) {
+
+	var resume model.Resume
+	if err := c.ShouldBind(&resume); err != nil {
 		middleware.Log.Error(err.Error())
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
@@ -186,8 +186,9 @@ func ModifyTemplate(c *gin.Context) {
 	}
 
 	session := sessions.Default(c)
-	tplID := session.Get("template_id")
+	resumeID := session.Get("resume_id")
 	userID := session.Get("user_id")
+	clubID := session.Get("resume_club_id")
 	session.Save()
 
 	if userID == nil {
@@ -198,17 +199,18 @@ func ModifyTemplate(c *gin.Context) {
 		return
 	}
 
-	if tplID == nil {
+	if resumeID == nil || clubID == nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
-			"msg":  "找不到此模板",
+			"msg":  "找不到此报名表",
 		})
 		return
 	}
 
-	tpl.TemplateID = tplID.(int)
-	tpl.UserID = userID.(int)
-	if ok := model.UpdateTemplateInfo(&tpl); ok == true {
+	resume.ResumeID = resumeID.(int)
+	resume.SubmitterID = userID.(int)
+	resume.ClubID = clubID.(int)
+	if ok := model.UpdateResumeInfo(&resume); ok == true {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 200,
 			"msg":  "修改成功",

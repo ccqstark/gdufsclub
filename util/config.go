@@ -13,6 +13,7 @@ type Config struct {
 	AppHost  string       `json:"app_host"`
 	AppPort  string       `json:"app_port"`
 	Database DatabaseConf `json:"database"`
+	Redis    RedisConf    `json:"redis"`
 	Logger   LoggerConf   `json:"logger"`
 	Image    ImageConf    `json:"image"`
 }
@@ -26,6 +27,14 @@ type DatabaseConf struct {
 	Timeout  string `json:"timeout"`
 }
 
+type RedisConf struct {
+	IdleConnection int    `json:"idle_connection"`
+	Protocol       string `json:"protocol"`
+	HostPort       string `json:"host_port"`
+	Password       string `json:"password"`
+	Key            string `json:"key"`
+}
+
 type LoggerConf struct {
 	LogFilePath string `json:"log_file_path"`
 	LogFileName string `json:"log_file_name"`
@@ -35,7 +44,6 @@ type ImageConf struct {
 	LogoPath    string `json:"logo_path"`
 	ProfilePath string `json:"profile_path"`
 }
-
 
 //全局
 var Cfg *Config = nil

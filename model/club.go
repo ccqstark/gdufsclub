@@ -51,14 +51,18 @@ func IsAccountRepeat(accountStr string) bool {
 
 	var club Club
 	// 检查错误是否为 RecordNotFound
-	err := db.Where("club_account=?", accountStr).Take(&club).Error
-	if errors.Is(err, ErrRecordNotFound) {
-		return false
-	} else if err != nil {
-		middleware.Log.Error(err.Error())
-		return true
+	/*err := db.Where("club_account=?", accountStr).Take(&club).Error
+	if err!=nil{
+		if errors.Is(err, ErrRecordNotFound) {
+			return false
+		} else {
+			middleware.Log.Error(err.Error())
+		}
 	}
-
+	return true*/
+	if db.Where("club_account=?", accountStr).Take(&club).RecordNotFound(){
+		return false
+	}
 	return true
 }
 

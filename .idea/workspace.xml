@@ -25,13 +25,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="eb5e9959-3a0d-4446-a66b-62daa4faaf44" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/controller/resume.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/controller/style.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/model/resume.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/model/style.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/club.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/club.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/controller/template.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/template.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/user.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/club.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/club.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/template.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/template.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/router/router.go" beforeDir="false" afterPath="$PROJECT_DIR$/router/router.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/util/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/util/config.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/util/tool.go" beforeDir="false" afterPath="$PROJECT_DIR$/util/tool.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -163,25 +168,29 @@
       <screen x="0" y="0" width="1536" height="834" />
     </state>
     <state x="583" y="321" key="GrepConsoleSound/0.0.1536.834@0.0.1536.834" timestamp="1598955165459" />
-    <state width="1493" height="277" key="GridCell.Tab.0.bottom" timestamp="1598984941768">
+    <state width="1493" height="260" key="GridCell.Tab.0.bottom" timestamp="1599104697581">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
-    <state width="1493" height="277" key="GridCell.Tab.0.bottom/0.0.1536.834@0.0.1536.834" timestamp="1598984941768" />
-    <state width="1493" height="277" key="GridCell.Tab.0.center" timestamp="1598984941767">
+    <state width="1493" height="260" key="GridCell.Tab.0.bottom/0.0.1536.834@0.0.1536.834" timestamp="1599104697581" />
+    <state width="1493" height="260" key="GridCell.Tab.0.center" timestamp="1599104697580">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
-    <state width="1493" height="277" key="GridCell.Tab.0.center/0.0.1536.834@0.0.1536.834" timestamp="1598984941767" />
-    <state width="1493" height="277" key="GridCell.Tab.0.left" timestamp="1598984941767">
+    <state width="1493" height="260" key="GridCell.Tab.0.center/0.0.1536.834@0.0.1536.834" timestamp="1599104697580" />
+    <state width="1493" height="260" key="GridCell.Tab.0.left" timestamp="1599104697580">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
-    <state width="1493" height="277" key="GridCell.Tab.0.left/0.0.1536.834@0.0.1536.834" timestamp="1598984941767" />
-    <state width="1493" height="277" key="GridCell.Tab.0.right" timestamp="1598984941767">
+    <state width="1493" height="260" key="GridCell.Tab.0.left/0.0.1536.834@0.0.1536.834" timestamp="1599104697580" />
+    <state width="1493" height="260" key="GridCell.Tab.0.right" timestamp="1599104697581">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
-    <state width="1493" height="277" key="GridCell.Tab.0.right/0.0.1536.834@0.0.1536.834" timestamp="1598984941767" />
+    <state width="1493" height="260" key="GridCell.Tab.0.right/0.0.1536.834@0.0.1536.834" timestamp="1599104697581" />
     <state x="10" y="57" width="1474" height="710" key="SettingsEditor" timestamp="1598955168857">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
     <state x="10" y="57" width="1474" height="710" key="SettingsEditor/0.0.1536.834@0.0.1536.834" timestamp="1598955168857" />
+    <state x="431" y="155" width="672" height="678" key="search.everywhere.popup" timestamp="1599055125563">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state x="431" y="155" width="672" height="678" key="search.everywhere.popup/0.0.1536.834@0.0.1536.834" timestamp="1599055125563" />
   </component>
 </project>
