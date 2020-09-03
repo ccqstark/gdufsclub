@@ -173,6 +173,7 @@ func UploadTplProfile(c *gin.Context) {
 	}
 }
 
+//修改模板
 func ModifyTemplate(c *gin.Context) {
 
 	var tpl model.Template

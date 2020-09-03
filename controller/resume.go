@@ -15,6 +15,56 @@ import (
 	"time"
 )
 
+//获取报名表
+func GetResume(c *gin.Context) {
+
+	clubIDStr := c.Param("club_id")
+	clubID, err := strconv.Atoi(clubIDStr)
+	if err != nil {
+		middleware.Log.Error(err.Error())
+	}
+
+	session := sessions.Default(c)
+	userID := session.Get("user_id")
+	session.Save()
+	if userID == nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "暂未登录",
+		})
+		return
+	}
+
+	if resume, ok := model.QueryResume(userID.(int), clubID); ok == true {
+		//设置session:获取到的resume的id
+		session.Set("resume_id", resume.ResumeID)
+		session.Set("resume_club_id", resume.ClubID)
+		session.Save()
+		c.JSON(http.StatusOK, gin.H{
+			"code": 200,
+			"resume": gin.H{
+				"name":      resume.Name,
+				"sex":       resume.Sex,
+				"class":     resume.Class,
+				"phone":     resume.Phone,
+				"email":     resume.Email,
+				"wechat":    resume.Wechat,
+				"hobby":     resume.Hobby,
+				"advantage": resume.Advantage,
+				"self":      resume.Self,
+				"reason":    resume.Reason,
+				"image":     resume.Image,
+				"extra":     resume.Extra,
+			},
+		})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 401,
+			"msg":  "还未向此社团提交过报名表",
+		})
+	}
+}
+
 //填写新的报名简历
 func FillNewResume(c *gin.Context) {
 
@@ -124,56 +174,7 @@ func UploadResumeProfile(c *gin.Context) {
 	}
 }
 
-//获取报名表
-func GetResume(c *gin.Context) {
-
-	clubIDStr := c.Param("club_id")
-	clubID, err := strconv.Atoi(clubIDStr)
-	if err != nil {
-		middleware.Log.Error(err.Error())
-	}
-
-	session := sessions.Default(c)
-	userID := session.Get("user_id")
-	session.Save()
-	if userID == nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code": 400,
-			"msg":  "暂未登录",
-		})
-		return
-	}
-
-	if resume, ok := model.QueryResume(userID.(int), clubID); ok == true {
-		//设置session:获取到的resume的id
-		session.Set("resume_id", resume.ResumeID)
-		session.Set("resume_club_id", resume.ClubID)
-		session.Save()
-		c.JSON(http.StatusOK, gin.H{
-			"code": 200,
-			"resume": gin.H{
-				"name":      resume.Name,
-				"sex":       resume.Sex,
-				"class":     resume.Class,
-				"phone":     resume.Phone,
-				"email":     resume.Email,
-				"wechat":    resume.Wechat,
-				"hobby":     resume.Hobby,
-				"advantage": resume.Advantage,
-				"self":      resume.Self,
-				"reason":    resume.Reason,
-				"image":     resume.Image,
-				"extra":     resume.Extra,
-			},
-		})
-	} else {
-		c.JSON(http.StatusOK, gin.H{
-			"code": 401,
-			"msg":  "还未向此社团提交过报名表",
-		})
-	}
-}
-
+//修改已填简历
 func ModifyResume(c *gin.Context) {
 
 	var resume model.Resume

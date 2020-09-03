@@ -10,6 +10,7 @@ type Style struct {
 	StyleSex       uint8  `gorm:"column:style_sex" json:"style_sex"`
 	StyleClass     uint8  `gorm:"column:style_class" json:"club_class"`
 	StylePhone     uint8  `gorm:"column:style_phone" json:"style_phone"`
+	StyleEmail     uint   `gorm:"column:style_email" json:"style_email"`
 	StyleWechat    uint8  `gorm:"column:style_wechat" json:"style_wechat"`
 	StyleImage     uint8  `gorm:"column:style_image" json:"style_image"`
 	StyleHobby     uint8  `gorm:"column:style_hobby" json:"style_hobby"`
@@ -19,8 +20,8 @@ type Style struct {
 	StyleExtra     string `gorm:"column:style_extra" json:"style_extra"`
 }
 
-
-func InsertNewStyle(style *Style)(int,bool){
+//插入新的表样式
+func InsertNewStyle(style *Style) (int, bool) {
 
 	//插入记录
 	if result := db.Create(&style); result.Error != nil {
@@ -41,4 +42,46 @@ func InsertNewStyle(style *Style)(int,bool){
 	}
 }
 
+//用社团id查找社团名
+func QueryClubName(id int) (string, bool) {
 
+	var club Club
+	if result := db.Where("club_id=?", id).Take(&club); result.Error != nil {
+		middleware.Log.Error(result.Error.Error())
+		return "", false
+	}
+
+	return club.ClubName, true
+}
+
+func IsStyleExist(clubID int) bool {
+
+	var style Style
+	// 检查错误是否为 RecordNotFound
+	if db.Where("club_id=?", clubID).Take(&style).RecordNotFound() {
+		return false
+	}
+
+	return true
+}
+
+func QueryStyle(clubID int) (Style, bool) {
+
+	var style Style
+	if result := db.Where("club_id=?", clubID).Take(&style); result.Error != nil {
+		middleware.Log.Error(result.Error.Error())
+		return Style{}, false
+	}
+
+	return style, true
+}
+
+func UpdateStyle(style *Style) bool {
+
+	if result := db.Save(&style); result.Error != nil {
+		middleware.Log.Error(result.Error.Error())
+		return false
+	}
+
+	return true
+}

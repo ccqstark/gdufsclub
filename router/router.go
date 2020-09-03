@@ -39,7 +39,7 @@ func LoadRouter() *gin.Engine {
 		v1User := v1Group.Group("/user")
 		{
 			v1User.GET("/first", controller.PickFirstUser)
-			v1User.POST("/demo", controller.Demo)
+			v1User.POST("", controller.Demo)
 		}
 
 		//club
@@ -64,17 +64,17 @@ func LoadRouter() *gin.Engine {
 			v1Resume.GET("/:club_id", controller.GetResume)
 			v1Resume.POST("/info", controller.FillNewResume)
 			v1Resume.POST("/profile", controller.UploadResumeProfile)
-			v1Resume.PUT("/info",controller.ModifyResume)
+			v1Resume.PUT("/info", controller.ModifyResume)
 		}
 
 		//style
-		//v1Style :=v1Group.Group("/style")
-		//{
-		//	v1Style.GET("",)
-		//	v1Style.GET()
-		//	v1Style.POST("")
-		//	v1Style.PUT()
-		//}
+		v1Style := v1Group.Group("/style")
+		{
+			v1Style.GET("", controller.GetStyle)
+			v1Style.GET("/user/:club_id", controller.GetUserStyle)
+			v1Style.POST("", controller.MakeNewStyle)
+			v1Style.PUT("",controller.ModifyStyle)
+		}
 
 		//admin
 		v1Admin := v1Group.Group("/admin")
