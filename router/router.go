@@ -73,7 +73,16 @@ func LoadRouter() *gin.Engine {
 			v1Style.GET("", controller.GetStyle)
 			v1Style.GET("/user/:club_id", controller.GetUserStyle)
 			v1Style.POST("", controller.MakeNewStyle)
-			v1Style.PUT("",controller.ModifyStyle)
+			v1Style.PUT("", controller.ModifyStyle)
+		}
+
+		//notice
+		v1Notice := v1Group.Group("/notice")
+		{
+			v1Notice.GET("/:progress", controller.GetNotice)
+			v1Notice.POST("", controller.PostNewNotice)
+			v1Notice.PUT("", controller.ModifyNotice)
+
 		}
 
 		//admin
