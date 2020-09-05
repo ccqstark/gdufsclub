@@ -24,6 +24,7 @@ func LoadRouter() *gin.Engine {
 	//使用跨域中间件
 	r.Use(middleware.Cors())
 
+
 	//v1路由组
 	v1Group := r.Group("/v1")
 	{
@@ -71,7 +72,7 @@ func LoadRouter() *gin.Engine {
 		v1Style := v1Group.Group("/style")
 		{
 			v1Style.GET("", controller.GetStyle)
-			v1Style.GET("/user/:club_id", controller.GetUserStyle)
+			v1Style.GET("/user_style/:club_id", controller.GetUserStyle)
 			v1Style.POST("", controller.MakeNewStyle)
 			v1Style.PUT("", controller.ModifyStyle)
 		}
@@ -79,10 +80,10 @@ func LoadRouter() *gin.Engine {
 		//notice
 		v1Notice := v1Group.Group("/notice")
 		{
-			v1Notice.GET("/:progress", controller.GetNotice)
+			v1Notice.GET("", controller.GetNotice)
+			v1Notice.GET("/user_notice",controller.GetUserNotice)
 			v1Notice.POST("", controller.PostNewNotice)
 			v1Notice.PUT("", controller.ModifyNotice)
-
 		}
 
 		//admin

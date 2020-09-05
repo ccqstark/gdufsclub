@@ -57,12 +57,7 @@ func InsertNewTemplate(tpl *Template) (int, bool) {
 	db.Raw("select LAST_INSERT_ID() as id").Pluck("id", &_id)
 	id := _id[0]
 
-	//方法判断插入成功返回false
-	if !db.NewRecord(&tpl) {
-		return id, true
-	} else {
-		return 0, false
-	}
+	return id, true
 }
 
 //更新模板头像
@@ -76,7 +71,6 @@ func UpdateTplProfile(id int, path string) bool {
 
 	return true
 }
-
 
 func UpdateTemplateInfo(tpl *Template) bool {
 

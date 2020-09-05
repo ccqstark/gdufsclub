@@ -34,12 +34,7 @@ func InsertNewStyle(style *Style) (int, bool) {
 	db.Raw("select LAST_INSERT_ID() as id").Pluck("id", &_id)
 	id := _id[0]
 
-	//方法判断插入成功返回false
-	if !db.NewRecord(&style) {
-		return id, true
-	} else {
-		return 0, false
-	}
+	return id, true
 }
 
 //用社团id查找社团名

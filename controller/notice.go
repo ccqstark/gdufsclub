@@ -9,9 +9,10 @@ import (
 	"strconv"
 )
 
+//获得社团自己的公告
 func GetNotice(c *gin.Context) {
 
-	progressStr := c.Param("/progress")
+	progressStr := c.Query("progress")
 	progress, err := strconv.Atoi(progressStr)
 	if err != nil {
 		middleware.Log.Error(err.Error())
@@ -41,7 +42,7 @@ func GetNotice(c *gin.Context) {
 	if notice, ok := model.QueryNotice(clubID.(int), progress); ok == true {
 		//设置session:获取到的notice的id、name
 		session.Set("notice_id", notice.NoticeID)
-		session.Set("club_Name",notice.ClubName)
+		session.Set("club_name", notice.ClubName)
 		session.Save()
 		c.JSON(http.StatusOK, gin.H{
 			"code": 200,
@@ -59,6 +60,49 @@ func GetNotice(c *gin.Context) {
 	}
 }
 
+//用户获得社团的公告
+func GetUserNotice(c *gin.Context) {
+
+	clubIDStr := c.Query("club_id")
+	clubID, err1 := strconv.Atoi(clubIDStr)
+	if err1 != nil {
+		middleware.Log.Error(err1.Error())
+	}
+
+	progressStr := c.Query("progress")
+	progress, err2 := strconv.Atoi(progressStr)
+	if err2 != nil {
+		middleware.Log.Error(err2.Error())
+	}
+
+	//公告是否存在
+	if !model.IsNoticeExist(clubID,progress) {
+		//不存在
+		c.JSON(http.StatusOK, gin.H{
+			"code": 401,
+			"msg":  "公告暂未发布",
+		})
+		return
+	}
+	//存在
+	if notice, ok := model.QueryNotice(clubID,progress); ok == true {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 200,
+			"notice": gin.H{
+				"club_name": notice.ClubName,
+				"progress":  notice.Progress,
+				"content":   notice.Content,
+			},
+		})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "公告获取失败",
+		})
+	}
+}
+
+//发布新公告
 func PostNewNotice(c *gin.Context) {
 
 	var notice model.Notice
@@ -101,7 +145,7 @@ func PostNewNotice(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"code":        200,
 			"msg":         "公告发布成功",
-			"template_id": noticeID,
+			"notice_id": noticeID,
 		})
 	} else {
 		c.JSON(http.StatusOK, gin.H{
@@ -112,7 +156,7 @@ func PostNewNotice(c *gin.Context) {
 }
 
 //修改公告
-func ModifyNotice(c *gin.Context){
+func ModifyNotice(c *gin.Context) {
 
 	var notice model.Notice
 	if err := c.ShouldBind(&notice); err != nil {
@@ -127,7 +171,7 @@ func ModifyNotice(c *gin.Context){
 	session := sessions.Default(c)
 	noticeID := session.Get("notice_id")
 	clubID := session.Get("club_id")
-	clubName := session.Get("clubName")
+	clubName := session.Get("club_name")
 	session.Save()
 
 	if noticeID == nil {

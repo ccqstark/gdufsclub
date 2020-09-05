@@ -1,9 +1,11 @@
 package model
 
-import "github.com/ccqstark/gdufsclub/middleware"
+import (
+	"github.com/ccqstark/gdufsclub/middleware"
+)
 
 type Notice struct {
-	NoticeID int    `gorm:"notice_id"`
+	NoticeID int    `gorm:"primary_key"`
 	ClubID   int    `gorm:"club_id"`
 	ClubName string `gorm:"club_name"`
 	Progress int    `gorm:"progress" json:"progress"`
@@ -46,12 +48,7 @@ func InsertNewNotice(notice *Notice) (int, bool) {
 	db.Raw("select LAST_INSERT_ID() as id").Pluck("id", &_id)
 	id := _id[0]
 
-	//方法判断插入成功返回false
-	if !db.NewRecord(&notice) {
-		return id, true
-	} else {
-		return 0, false
-	}
+	return id, true
 }
 
 func UpdateNotice(notice *Notice) bool {
