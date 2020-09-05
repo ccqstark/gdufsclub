@@ -97,10 +97,10 @@ func LoadRouter() *gin.Engine {
 		//admin
 		v1Admin := v1Group.Group("/admin")
 		{
-			v1Admin.GET("/users", func(c *gin.Context) {
-				c.String(200, "/v1/admin/users")
-			})
+			v1Admin.GET("/not",controller.GetAllNotPass)
+			//v1Admin.PUT(":/club_id",controller.)
 		}
+
 
 	}
 

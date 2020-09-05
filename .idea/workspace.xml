@@ -25,12 +25,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="eb5e9959-3a0d-4446-a66b-62daa4faaf44" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/controller/process.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/model/process.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/controller/admin.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/model/admin.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/notice.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/notice.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/resume.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/resume.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/notice.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/notice.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/router/router.go" beforeDir="false" afterPath="$PROJECT_DIR$/router/router.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -155,30 +152,30 @@
       <screen x="0" y="0" width="1536" height="834" />
     </state>
     <state x="525" y="137" key="FileChooserDialogImpl/0.0.1536.834@0.0.1536.834" timestamp="1598957117897" />
-    <state x="311" y="76" key="GrepConsoleSettings" timestamp="1599146992223">
+    <state x="311" y="76" key="GrepConsoleSettings" timestamp="1599298679716">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
-    <state x="311" y="76" key="GrepConsoleSettings/0.0.1536.834@0.0.1536.834" timestamp="1599146992223" />
+    <state x="311" y="76" key="GrepConsoleSettings/0.0.1536.834@0.0.1536.834" timestamp="1599298679716" />
     <state x="583" y="321" key="GrepConsoleSound" timestamp="1598955165459">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
     <state x="583" y="321" key="GrepConsoleSound/0.0.1536.834@0.0.1536.834" timestamp="1598955165459" />
-    <state width="1493" height="337" key="GridCell.Tab.0.bottom" timestamp="1599296334786">
+    <state width="1493" height="337" key="GridCell.Tab.0.bottom" timestamp="1599300210146">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
-    <state width="1493" height="337" key="GridCell.Tab.0.bottom/0.0.1536.834@0.0.1536.834" timestamp="1599296334786" />
-    <state width="1493" height="337" key="GridCell.Tab.0.center" timestamp="1599296334786">
+    <state width="1493" height="337" key="GridCell.Tab.0.bottom/0.0.1536.834@0.0.1536.834" timestamp="1599300210146" />
+    <state width="1493" height="337" key="GridCell.Tab.0.center" timestamp="1599300210145">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
-    <state width="1493" height="337" key="GridCell.Tab.0.center/0.0.1536.834@0.0.1536.834" timestamp="1599296334786" />
-    <state width="1493" height="337" key="GridCell.Tab.0.left" timestamp="1599296334786">
+    <state width="1493" height="337" key="GridCell.Tab.0.center/0.0.1536.834@0.0.1536.834" timestamp="1599300210145" />
+    <state width="1493" height="337" key="GridCell.Tab.0.left" timestamp="1599300210145">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
-    <state width="1493" height="337" key="GridCell.Tab.0.left/0.0.1536.834@0.0.1536.834" timestamp="1599296334786" />
-    <state width="1493" height="337" key="GridCell.Tab.0.right" timestamp="1599296334786">
+    <state width="1493" height="337" key="GridCell.Tab.0.left/0.0.1536.834@0.0.1536.834" timestamp="1599300210145" />
+    <state width="1493" height="337" key="GridCell.Tab.0.right" timestamp="1599300210145">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
-    <state width="1493" height="337" key="GridCell.Tab.0.right/0.0.1536.834@0.0.1536.834" timestamp="1599296334786" />
+    <state width="1493" height="337" key="GridCell.Tab.0.right/0.0.1536.834@0.0.1536.834" timestamp="1599300210145" />
     <state x="10" y="57" width="1474" height="710" key="SettingsEditor" timestamp="1598955168857">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
