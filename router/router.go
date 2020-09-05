@@ -86,6 +86,14 @@ func LoadRouter() *gin.Engine {
 			v1Notice.PUT("", controller.ModifyNotice)
 		}
 
+		//process
+		v1Process := v1Group.Group("/process")
+		{
+			v1Process.GET("/:club_id",controller.GetProcess)
+			v1Process.PUT("/result",controller.OperateOne)
+
+		}
+
 		//admin
 		v1Admin := v1Group.Group("/admin")
 		{

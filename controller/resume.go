@@ -95,6 +95,15 @@ func FillNewResume(c *gin.Context) {
 		session.Set("resume_id", resumeID)
 		session.Save()
 
+		//创建面试进程
+		if okk := model.CreateProcess(submitterID.(int), resume.ClubID); okk == false {
+			c.JSON(http.StatusOK, gin.H{
+				"code": 400,
+				"msg":  "无法创建面试流程",
+			})
+			return
+		}
+
 		c.JSON(http.StatusOK, gin.H{
 			"code":      200,
 			"msg":       "报名表提交成功",

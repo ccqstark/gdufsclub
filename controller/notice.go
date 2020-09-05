@@ -13,9 +13,15 @@ import (
 func GetNotice(c *gin.Context) {
 
 	progressStr := c.Query("progress")
-	progress, err := strconv.Atoi(progressStr)
-	if err != nil {
-		middleware.Log.Error(err.Error())
+	progress, err1 := strconv.Atoi(progressStr)
+	if err1 != nil {
+		middleware.Log.Error(err1.Error())
+	}
+
+	passStr := c.Query("pass")
+	pass, err2 := strconv.Atoi(passStr)
+	if err2 != nil {
+		middleware.Log.Error(err2.Error())
 	}
 
 	session := sessions.Default(c)
@@ -30,7 +36,7 @@ func GetNotice(c *gin.Context) {
 	}
 
 	//公告是否存在
-	if !model.IsNoticeExist(clubID.(int), progress) {
+	if !model.IsNoticeExist(clubID.(int), progress, pass) {
 		//不存在
 		c.JSON(http.StatusOK, gin.H{
 			"code": 401,
@@ -39,7 +45,7 @@ func GetNotice(c *gin.Context) {
 		return
 	}
 	//存在
-	if notice, ok := model.QueryNotice(clubID.(int), progress); ok == true {
+	if notice, ok := model.QueryNotice(clubID.(int), progress, pass); ok == true {
 		//设置session:获取到的notice的id、name
 		session.Set("notice_id", notice.NoticeID)
 		session.Set("club_name", notice.ClubName)
@@ -48,7 +54,6 @@ func GetNotice(c *gin.Context) {
 			"code": 200,
 			"notice": gin.H{
 				"club_name": notice.ClubName,
-				"progress":  notice.Progress,
 				"content":   notice.Content,
 			},
 		})
@@ -60,7 +65,7 @@ func GetNotice(c *gin.Context) {
 	}
 }
 
-//用户获得社团的公告
+//用户获得社团的公告,根据自己通过与否
 func GetUserNotice(c *gin.Context) {
 
 	clubIDStr := c.Query("club_id")
@@ -75,8 +80,30 @@ func GetUserNotice(c *gin.Context) {
 		middleware.Log.Error(err2.Error())
 	}
 
+	session := sessions.Default(c)
+	userID := session.Get("user_id")
+	session.Save()
+	if userID == nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "暂未登录",
+		})
+		return
+	}
+
+	//查询面试结果
+	var pass int
+	var ok bool
+	if pass, ok = model.QueryInterviewResult(userID.(int), clubID); ok == false {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "查询不到面试结果",
+		})
+		return
+	}
+
 	//公告是否存在
-	if !model.IsNoticeExist(clubID,progress) {
+	if !model.IsNoticeExist(clubID, progress, pass) {
 		//不存在
 		c.JSON(http.StatusOK, gin.H{
 			"code": 401,
@@ -85,12 +112,11 @@ func GetUserNotice(c *gin.Context) {
 		return
 	}
 	//存在
-	if notice, ok := model.QueryNotice(clubID,progress); ok == true {
+	if notice, ok := model.QueryNotice(clubID, progress, pass); ok == true {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 200,
 			"notice": gin.H{
 				"club_name": notice.ClubName,
-				"progress":  notice.Progress,
 				"content":   notice.Content,
 			},
 		})
@@ -143,8 +169,8 @@ func PostNewNotice(c *gin.Context) {
 		session.Save()
 
 		c.JSON(http.StatusOK, gin.H{
-			"code":        200,
-			"msg":         "公告发布成功",
+			"code":      200,
+			"msg":       "公告发布成功",
 			"notice_id": noticeID,
 		})
 	} else {

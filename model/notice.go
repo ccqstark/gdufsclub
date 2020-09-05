@@ -9,24 +9,25 @@ type Notice struct {
 	ClubID   int    `gorm:"club_id"`
 	ClubName string `gorm:"club_name"`
 	Progress int    `gorm:"progress" json:"progress"`
+	Pass     int    `gorm:"pass" json:"pass"`
 	Content  string `gorm:"content" json:"content"`
 }
 
-func IsNoticeExist(clubID int, progress int) bool {
+func IsNoticeExist(clubID int, progress int, pass int) bool {
 
 	var notice Notice
 	// 检查错误是否为 RecordNotFound
-	if db.Where("club_id=? and progress=?", clubID, progress).Take(&notice).RecordNotFound() {
+	if db.Where("club_id=? and progress=? and pass=?", clubID, progress, pass).Take(&notice).RecordNotFound() {
 		return false
 	}
 
 	return true
 }
 
-func QueryNotice(clubID int, progress int) (Notice, bool) {
+func QueryNotice(clubID int, progress int, pass int) (Notice, bool) {
 
 	var notice Notice
-	if result := db.Where("club_id=? and progress=?", clubID, progress).Take(&notice); result.Error != nil {
+	if result := db.Where("club_id=? and progress=? pass=?", clubID, progress, pass).Take(&notice); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return Notice{}, false
 	}
