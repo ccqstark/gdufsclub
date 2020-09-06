@@ -18,6 +18,7 @@ type Club struct {
 	Pass          int    `gorm:"column:pass"`
 }
 
+
 func InsertNewClub(club *Club) (int, bool) {
 	//md5加密
 	club.ClubPassword = util.Md5SaltCrypt(club.ClubPassword)
@@ -56,4 +57,40 @@ func UpdateLogo(id int, path string) bool {
 	}
 
 	return true
+}
+
+func SearchByWord(cutWord []string) []Club {
+
+	var clubSegment []Club
+	var clubGather []Club
+	for _, word := range cutWord {
+		db.Select("club_id,club_name,total_progress,logo").Where("club_name like ? and pass=?", "%"+word+"%", 1).Find(&clubSegment)
+		clubGather = append(clubGather, clubSegment...)
+	}
+
+	return clubGather
+}
+
+func QueryUserTotalPage(clubID int, progress int) (int, bool) {
+
+	var process Process
+	total:=0
+	if result := db.Model(&process).Where("club_ID=? and progress=? and pass <> ?",clubID,progress-1,2).Count(&total); result.Error != nil {
+		middleware.Log.Error(result.Error.Error())
+		return 0, false
+	}
+
+
+	return total,true
+}
+
+
+func QueryUserListBrief(clubID int,progress int) () {
+
+	//姓名，性别，班级，手机号，微信号
+	//先获取通过了的id，再通过id查详细信息
+	var process []Process
+	db.Where("club_ID=? and progress=? and pass <> ?",clubID,progress-1,2).Find(&process)
+	
+
 }

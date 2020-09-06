@@ -49,6 +49,11 @@ func LoadRouter() *gin.Engine {
 			v1Club.POST("/info", controller.SettleNewClub)
 			v1Club.POST("/logo", controller.UploadClubLogo)
 			v1Club.GET("/search", controller.SearchClub)
+
+			v1Club.GET("/user/total_page/:progress",controller.GetUserTotalPage)
+			//v1Club.GET("/user_list/:progress",controller.GetUserListBrief)
+
+			v1Club.GET("/user_resume/:club_id/:user_id", controller.GetUserResume)
 		}
 
 		//template

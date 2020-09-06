@@ -78,7 +78,7 @@ func GetUserStyle(c *gin.Context) {
 		//不存在
 		c.JSON(http.StatusOK, gin.H{
 			"code": 401,
-			"msg":  "改社团还未开放报名表噢",
+			"msg":  "该社团还未开放报名表噢",
 		})
 		return
 	}

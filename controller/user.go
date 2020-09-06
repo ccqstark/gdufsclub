@@ -22,9 +22,13 @@ func Demo(c *gin.Context){
 	session.Set("user_id",65)
 	session.Set("club_id",1)
 	session.Save()
+
+
 	c.JSON(http.StatusOK, gin.H{
 		"user_id":65,
 		"club_id":1,
 		"code":200,
 	})
 }
+
+
