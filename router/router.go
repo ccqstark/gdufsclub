@@ -48,6 +48,7 @@ func LoadRouter() *gin.Engine {
 		{
 			v1Club.POST("/info", controller.SettleNewClub)
 			v1Club.POST("/logo", controller.UploadClubLogo)
+			v1Club.GET("/search", controller.SearchClub)
 		}
 
 		//template
@@ -91,14 +92,14 @@ func LoadRouter() *gin.Engine {
 		{
 			v1Process.GET("/:club_id",controller.GetProcess)
 			v1Process.PUT("/result",controller.OperateOne)
-
 		}
 
 		//admin
 		v1Admin := v1Group.Group("/admin")
 		{
 			v1Admin.GET("/not",controller.GetAllNotPass)
-			//v1Admin.PUT(":/club_id",controller.)
+			v1Admin.GET("/enter",controller.GetAllPass)
+			v1Admin.PUT("/:club_id/:status",controller.AuditOne)
 		}
 
 

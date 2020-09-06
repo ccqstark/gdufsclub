@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/ccqstark/gdufsclub/middleware"
 	"github.com/ccqstark/gdufsclub/model"
+	"github.com/ccqstark/gdufsclub/pkg/sego"
 	"github.com/ccqstark/gdufsclub/util"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -13,6 +14,13 @@ import (
 	"strings"
 	"time"
 )
+
+var Segmenter sego.Segmenter
+
+func init(){
+	// 载入词典
+	Segmenter.LoadDictionary("./pkg/sego/data/dictionary.txt")
+}
 
 func SettleNewClub(c *gin.Context) {
 	var club model.Club
@@ -121,4 +129,25 @@ func UploadClubLogo(c *gin.Context) {
 			"path": filepath,
 		},
 	})
+}
+
+func SearchClub(c *gin.Context){
+
+	keyWord := c.Query("key_word")
+
+	// 分词
+	text := []byte(keyWord)
+	segments := Segmenter.Segment(text)
+
+	// 处理分词结果
+	str:=sego.SegmentsToString(segments, true)
+	fmt.Println(str)
+	//strr := strings.Split(str,",")
+	//for _,v := range strr {
+	//	fmt.Println(v)
+	//}
+	c.JSON(200,gin.H{
+		"word":str,
+	})
+
 }
