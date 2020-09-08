@@ -46,13 +46,18 @@ func LoadRouter() *gin.Engine {
 		//club
 		v1Club := v1Group.Group("/club")
 		{
+			//社团入住
 			v1Club.POST("/info", controller.SettleNewClub)
 			v1Club.POST("/logo", controller.UploadClubLogo)
+
+			//搜索
 			v1Club.GET("/search", controller.SearchClub)
 
+			//获取面试者分页列表
 			v1Club.GET("/user/total_page/:progress",controller.GetUserTotalPage)
-			//v1Club.GET("/user_list/:progress",controller.GetUserListBrief)
+			v1Club.GET("/user_list",controller.GetUserListBrief)
 
+			//社团获取面试者信息
 			v1Club.GET("/user_resume/:club_id/:user_id", controller.GetUserResume)
 		}
 
@@ -90,6 +95,8 @@ func LoadRouter() *gin.Engine {
 			v1Notice.GET("/user_notice",controller.GetUserNotice)
 			v1Notice.POST("", controller.PostNewNotice)
 			v1Notice.PUT("", controller.ModifyNotice)
+			v1Notice.PUT("/publish/:progress",controller.PublishNotice)
+
 		}
 
 		//process

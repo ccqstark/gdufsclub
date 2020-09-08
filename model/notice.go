@@ -24,10 +24,11 @@ func IsNoticeExist(clubID int, progress int, pass int) bool {
 	return true
 }
 
+//用户查看公告
 func QueryNotice(clubID int, progress int, pass int) (Notice, bool) {
 
 	var notice Notice
-	if result := db.Where("club_id=? and progress=? pass=?", clubID, progress, pass).Take(&notice); result.Error != nil {
+	if result := db.Where("club_id=? and progress=? and pass=? and publish=?", clubID, progress, pass,1).Take(&notice); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return Notice{}, false
 	}
@@ -55,6 +56,18 @@ func InsertNewNotice(notice *Notice) (int, bool) {
 func UpdateNotice(notice *Notice) bool {
 
 	if result := db.Save(&notice); result.Error != nil {
+		middleware.Log.Error(result.Error.Error())
+		return false
+	}
+
+	return true
+}
+
+//公告统一发布
+func MakeNoticePublished(clubID int, progress int) bool {
+
+	var notice Notice
+	if result := db.Model(&notice).Where("club_id=? and progress=?", clubID, progress).Update("publish", 1); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return false
 	}

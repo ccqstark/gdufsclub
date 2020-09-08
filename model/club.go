@@ -18,7 +18,16 @@ type Club struct {
 	Pass          int    `gorm:"column:pass"`
 }
 
+type UserList struct {
+	UserID int
+	Name   string
+	Sex    string
+	Class  string
+	Phone  string
+	Wechat string
+}
 
+//插入新的社团
 func InsertNewClub(club *Club) (int, bool) {
 	//md5加密
 	club.ClubPassword = util.Md5SaltCrypt(club.ClubPassword)
@@ -59,6 +68,7 @@ func UpdateLogo(id int, path string) bool {
 	return true
 }
 
+//通过关键词搜索
 func SearchByWord(cutWord []string) []Club {
 
 	var clubSegment []Club
@@ -74,23 +84,28 @@ func SearchByWord(cutWord []string) []Club {
 func QueryUserTotalPage(clubID int, progress int) (int, bool) {
 
 	var process Process
-	total:=0
-	if result := db.Model(&process).Where("club_ID=? and progress=? and pass <> ?",clubID,progress-1,2).Count(&total); result.Error != nil {
+	total := 0
+	if result := db.Model(&process).Where("club_ID=? and progress=? and pass <> ?", clubID, progress-1, 2).Count(&total); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return 0, false
 	}
 
-
-	return total,true
+	return total, true
 }
 
+//生成这一轮用户通过者用户基本信息列表
+func QueryUserListBrief(clubID int, progress int,numberRows int,begin int) ([]UserList, bool) {
 
-func QueryUserListBrief(clubID int,progress int) () {
+	//基本信息: 姓名，性别，班级，手机号，微信号
+	//先获取通过了的id, 再通过id查信息, 分页
+	var userList []UserList
+	if result := db.Table("process").Where("club_ID=? and progress=? and pass <> ?", clubID, progress-1, 2).
+		Joins("left join resume on resume.user_id=process.user_id").
+		Select("user_id,name,sex,class,phone,wechat").
+		Order("user_id").Limit(numberRows).Offset(begin).Find(&userList); result.Error != nil {
+		middleware.Log.Error(result.Error.Error())
+		return []UserList{}, false
+	}
 
-	//姓名，性别，班级，手机号，微信号
-	//先获取通过了的id，再通过id查详细信息
-	var process []Process
-	db.Where("club_ID=? and progress=? and pass <> ?",clubID,progress-1,2).Find(&process)
-	
-
+	return userList, true
 }

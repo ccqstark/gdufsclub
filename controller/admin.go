@@ -24,7 +24,7 @@ func GetAllNotPass(c *gin.Context) {
 func GetAllPass(c *gin.Context) {
 
 	if enterClub, ok := model.QueryAllPass(); ok == true {
-		c.IndentedJSON(200, enterClub)
+		c.IndentedJSON(http.StatusOK, enterClub)
 	} else {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,

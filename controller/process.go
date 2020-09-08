@@ -6,17 +6,10 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"strconv"
 )
 
 //用户查看自己的面试进程
 func GetProcess(c *gin.Context) {
-
-	clubIDStr := c.Param("club_id")
-	clubID, err := strconv.Atoi(clubIDStr)
-	if err != nil {
-		middleware.Log.Error(err.Error())
-	}
 
 	session := sessions.Default(c)
 	userID := session.Get("user_id")
@@ -29,16 +22,12 @@ func GetProcess(c *gin.Context) {
 		return
 	}
 
-	if progress, result, ok := model.QueryProcess(userID.(int), clubID); ok == true {
-		c.JSON(http.StatusOK, gin.H{
-			"code":     200,
-			"progress": progress,
-			"result":   result,
-		})
+	if progress, ok := model.QueryProcess(userID.(int)); ok == true {
+		c.IndentedJSON(http.StatusOK,progress)
 	} else {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
-			"msg":  "获取面试进程失败",
+			"msg":  "当前无面试",
 		})
 	}
 }
@@ -79,3 +68,4 @@ func OperateOne(c *gin.Context) {
 		})
 	}
 }
+

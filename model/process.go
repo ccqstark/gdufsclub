@@ -18,15 +18,16 @@ type ProcessUser struct {
 	Pass   int `json:"pass"`
 }
 
-func QueryProcess(userID int, clubID int) (int, int, bool) {
+//获取用户所有的面试进程
+func QueryProcess(userID int) ([]Process, bool) {
 
-	var process Process
-	if result := db.Where("user_id = ? and club_id=?", userID, clubID).Take(&process); result.Error != nil {
+	var process []Process
+	if result := db.Where("user_id = ?", userID).Find(&process); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
-		return 0, 0, false
+		return []Process{}, false
 	}
 
-	return process.Progress, process.Result, true
+	return process, true
 
 }
 

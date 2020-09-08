@@ -65,7 +65,7 @@ func GetNotice(c *gin.Context) {
 	}
 }
 
-//用户获得社团的公告,根据自己通过与否
+//用户获得社团的公告,根据自己通过与否查看对应的公告
 func GetUserNotice(c *gin.Context) {
 
 	clubIDStr := c.Query("club_id")
@@ -123,7 +123,7 @@ func GetUserNotice(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
-			"msg":  "公告获取失败",
+			"msg":  "公告暂未发布",
 		})
 	}
 }
@@ -238,4 +238,40 @@ func ModifyNotice(c *gin.Context) {
 			"msg":  "修改失败",
 		})
 	}
+}
+
+//公告统一发布
+func PublishNotice(c *gin.Context) {
+
+	progressStr := c.Param("progress")
+	progress, err := strconv.Atoi(progressStr)
+	if err != nil {
+		middleware.Log.Error(err.Error())
+	}
+
+	session := sessions.Default(c)
+	clubID := session.Get("club_id")
+	session.Save()
+	if clubID == nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "暂未登录",
+		})
+		return
+	}
+
+	if ok := model.MakeNoticePublished(clubID.(int), progress); ok == true {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 200,
+			"msg":  "操作成功",
+		})
+		return
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "操作失败",
+		})
+		return
+	}
+
 }

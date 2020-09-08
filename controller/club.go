@@ -174,9 +174,8 @@ func SearchClub(c *gin.Context) {
 	}
 }
 
-
 //获取一共的页数
-func GetUserTotalPage(c *gin.Context){
+func GetUserTotalPage(c *gin.Context) {
 
 	progressStr := c.Param("progress")
 	progress, err := strconv.Atoi(progressStr)
@@ -195,40 +194,60 @@ func GetUserTotalPage(c *gin.Context){
 		return
 	}
 
-	if page,ok := model.QueryUserTotalPage(clubID.(int),progress);ok==true{
-		c.JSON(http.StatusOK,gin.H{
-			"code":200,
-			"total":page,
+	if page, ok := model.QueryUserTotalPage(clubID.(int), progress); ok == true {
+		c.JSON(http.StatusOK, gin.H{
+			"code":  200,
+			"total": page,
 		})
-	}else {
-		c.JSON(http.StatusOK,gin.H{
-			"code":400,
-			"msg":"查询失败",
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "查询失败",
 		})
 	}
 }
 
-
-
-
 //获取对应面试轮数的用户列表
-func GetUserListBrief(c *gin.Context){
+func GetUserListBrief(c *gin.Context) {
 
-	progressStr := c.Param("progress")
+	progressStr := c.Query("progress")
 	progress, err := strconv.Atoi(progressStr)
 	if err != nil {
 		middleware.Log.Error(err.Error())
 	}
 
+	rowsStr := c.Query("rows")
+	rows, err := strconv.Atoi(rowsStr)
+	if err != nil {
+		middleware.Log.Error(err.Error())
+	}
 
+	beginStr := c.Query("begin")
+	begin, err := strconv.Atoi(beginStr)
+	if err != nil {
+		middleware.Log.Error(err.Error())
+	}
 
+	session := sessions.Default(c)
+	clubID := session.Get("club_id")
+	session.Save()
+	if clubID == nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "暂未登录",
+		})
+		return
+	}
 
-
-
-
-
+	if userList, ok := model.QueryUserListBrief(clubID.(int), progress, rows, begin); ok == true {
+		c.IndentedJSON(http.StatusOK, userList)
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "获取失败",
+		})
+	}
 }
-
 
 //获得用户的信息
 func GetUserResume(c *gin.Context) {
@@ -244,7 +263,6 @@ func GetUserResume(c *gin.Context) {
 	if err != nil {
 		middleware.Log.Error(err.Error())
 	}
-
 
 	if resume, ok := model.QueryResume(userID, clubID); ok == true {
 		c.JSON(http.StatusOK, gin.H{
@@ -267,7 +285,7 @@ func GetUserResume(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 401,
-			"msg":  "还未向此社团提交过报名表",
+			"msg":  "找不到此人的报名表",
 		})
 	}
 }
