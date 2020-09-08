@@ -8,6 +8,7 @@ import (
 	"github.com/ccqstark/gdufsclub/util"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/tealeg/xlsx"
 	"net/http"
 	"os"
 	"path"
@@ -99,7 +100,14 @@ func UploadClubLogo(c *gin.Context) {
 
 	//保存至服务器指定目录
 	filepath := fmt.Sprintf("%s%s%s", fileDir, fileName, fileExt)
-	c.SaveUploadedFile(file, filepath)
+	fileNameExt := fmt.Sprintf("%s%s", fileName, fileExt)
+	if err := c.SaveUploadedFile(file, filepath); err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "上传失败!",
+		})
+		return
+	}
 
 	//写入数据库
 	session := sessions.Default(c)
@@ -127,7 +135,7 @@ func UploadClubLogo(c *gin.Context) {
 		"code": 200,
 		"msg":  "上传成功!",
 		"result": gin.H{
-			"path": filepath,
+			"path": fileNameExt,
 		},
 	})
 }
@@ -288,4 +296,114 @@ func GetUserResume(c *gin.Context) {
 			"msg":  "找不到此人的报名表",
 		})
 	}
+}
+
+//导出当前面通过者excel
+func GetExcel(c *gin.Context) {
+
+	progressStr := c.Param("progress")
+	progress, err := strconv.Atoi(progressStr)
+	if err != nil {
+		middleware.Log.Error(err.Error())
+	}
+
+	session := sessions.Default(c)
+	clubID := session.Get("club_id")
+	session.Save()
+	if clubID == nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "暂未登录",
+		})
+		return
+	}
+
+	//获取此面所有通过者的user_id
+	passerID := model.QueryPasser(clubID.(int), progress)
+
+	//获取这些通过者的具体信息
+	var infoArr []model.Resume
+	var ok bool
+	infoArr, ok = model.GainInfoByArray(clubID.(int), passerID)
+	if ok == false {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "获取不到数据",
+		})
+		return
+	}
+
+	//生成Excel
+	file := xlsx.NewFile()
+	sheet, err := file.AddSheet("info_list")
+	if err != nil {
+		fmt.Printf(err.Error())
+	}
+
+	//添加项目标题
+	row := sheet.AddRow()
+
+	nameCell := row.AddCell()
+	nameCell.Value = "姓名"
+
+	sexCell := row.AddCell()
+	sexCell.Value = "性别"
+
+	classCell := row.AddCell()
+	classCell.Value = "班级"
+
+	phoneCell := row.AddCell()
+	phoneCell.Value = "手机"
+
+	wechatCell := row.AddCell()
+	wechatCell.Value = "微信号"
+
+	//载入data
+	for _, info := range infoArr {
+		row := sheet.AddRow()
+
+		nameCell := row.AddCell()
+		nameCell.Value = info.Name
+
+		sexCell := row.AddCell()
+		sexCell.Value = info.Sex
+
+		classCell := row.AddCell()
+		classCell.Value = info.Class
+
+		phoneCell := row.AddCell()
+		phoneCell.Value = info.Phone
+
+		wechatCell := row.AddCell()
+		wechatCell.Value = info.Wechat
+	}
+
+	fileName := util.Md5SaltCrypt(fmt.Sprintf("%s%s", "excelqlg", time.Now().String()))
+	fileDir := "./file/"
+
+	//判断文件夹是否存在
+	isExist := util.IsExists(fileDir)
+	if !isExist {
+		os.Mkdir(fileDir, os.ModePerm)
+	}
+
+	//保存至服务器指定的目录
+	filepath := fmt.Sprintf("%s%s%s", fileDir, fileName, ".xlsx")
+	fileNameExt := fmt.Sprintf("%s%s", fileName, ".xlsx")
+	err = file.Save(filepath)
+
+	if err != nil {
+		middleware.Log.Error(err.Error())
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "导出失败",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"code":     200,
+		"msg":      "导出成功",
+		"filename": fileNameExt,
+	})
 }

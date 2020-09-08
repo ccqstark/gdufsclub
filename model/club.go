@@ -81,6 +81,7 @@ func SearchByWord(cutWord []string) []Club {
 	return clubGather
 }
 
+//当前面用户总页数
 func QueryUserTotalPage(clubID int, progress int) (int, bool) {
 
 	var process Process
@@ -94,18 +95,50 @@ func QueryUserTotalPage(clubID int, progress int) (int, bool) {
 }
 
 //生成这一轮用户通过者用户基本信息列表
-func QueryUserListBrief(clubID int, progress int,numberRows int,begin int) ([]UserList, bool) {
+func QueryUserListBrief(clubID int, progress int, numberRows int, begin int) ([]UserList, bool) {
 
 	//基本信息: 姓名，性别，班级，手机号，微信号
 	//先获取通过了的id, 再通过id查信息, 分页
 	var userList []UserList
-	if result := db.Table("process").Where("club_ID=? and progress=? and pass <> ?", clubID, progress-1, 2).
+	if result := db.Table("process").Where("club_ID=? and progress=? and result <> ?", clubID, progress-1, 2).
 		Joins("left join resume on resume.user_id=process.user_id").
-		Select("user_id,name,sex,class,phone,wechat").
+		Select("user_id,name,sex,class,phone,wechat, pass").
 		Order("user_id").Limit(numberRows).Offset(begin).Find(&userList); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return []UserList{}, false
 	}
 
 	return userList, true
+}
+
+//获取当前面所有通过者ID
+func QueryPasser(clubID int, progress int) []int {
+
+	var process []Process
+	if result := db.Where("club_ID=? and progress=? and result=?", clubID, progress, 1).
+		Select("user_id").Find(&process); result.Error != nil {
+		middleware.Log.Error(result.Error.Error())
+		return []int{}
+	}
+
+	var passerID []int
+
+	for _, pro := range process {
+		passerID = append(passerID, pro.UserID)
+	}
+
+	return passerID
+}
+
+//通过ID数组批量获取用户提交的报名表上的信息
+func GainInfoByArray(clubID int, userID []int) ([]Resume,bool){
+
+	var resumeArr []Resume
+	if result := db.Where("club_id=? and submitter_id IN (?)",clubID,userID).
+		Find(&resumeArr);result.Error != nil{
+		middleware.Log.Error(result.Error.Error())
+		return []Resume{},false
+	}
+
+	return resumeArr,true
 }

@@ -20,13 +20,13 @@ func PickFirstUser(c *gin.Context) {
 func Demo(c *gin.Context){
 	session := sessions.Default(c)
 	session.Set("user_id",65)
-	session.Set("club_id",1)
+	session.Set("club_id",33)
 	session.Save()
 
 
 	c.JSON(http.StatusOK, gin.H{
 		"user_id":65,
-		"club_id":1,
+		"club_id":33,
 		"code":200,
 	})
 }

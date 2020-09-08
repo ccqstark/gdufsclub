@@ -24,7 +24,6 @@ func LoadRouter() *gin.Engine {
 	//使用跨域中间件
 	r.Use(middleware.Cors())
 
-
 	//v1路由组
 	v1Group := r.Group("/v1")
 	{
@@ -54,11 +53,14 @@ func LoadRouter() *gin.Engine {
 			v1Club.GET("/search", controller.SearchClub)
 
 			//获取面试者分页列表
-			v1Club.GET("/user/total_page/:progress",controller.GetUserTotalPage)
-			v1Club.GET("/user_list",controller.GetUserListBrief)
+			v1Club.GET("/user/total_page/:progress", controller.GetUserTotalPage)
+			v1Club.GET("/user_list", controller.GetUserListBrief)
 
 			//社团获取面试者信息
 			v1Club.GET("/user_resume/:club_id/:user_id", controller.GetUserResume)
+
+			//导出excel
+			v1Club.GET("/excel/:progress",controller.GetExcel)
 		}
 
 		//template
@@ -92,28 +94,28 @@ func LoadRouter() *gin.Engine {
 		v1Notice := v1Group.Group("/notice")
 		{
 			v1Notice.GET("", controller.GetNotice)
-			v1Notice.GET("/user_notice",controller.GetUserNotice)
+			v1Notice.GET("/user_notice", controller.GetUserNotice)
 			v1Notice.POST("", controller.PostNewNotice)
 			v1Notice.PUT("", controller.ModifyNotice)
-			v1Notice.PUT("/publish/:progress",controller.PublishNotice)
+			v1Notice.PUT("/publish/:progress", controller.PublishNotice)
 
 		}
 
 		//process
 		v1Process := v1Group.Group("/process")
 		{
-			v1Process.GET("/:club_id",controller.GetProcess)
-			v1Process.PUT("/result",controller.OperateOne)
+			v1Process.GET("/:club_id", controller.GetProcess)
+			v1Process.PUT("/result", controller.OperateOne)
 		}
 
 		//admin
 		v1Admin := v1Group.Group("/admin")
 		{
-			v1Admin.GET("/not",controller.GetAllNotPass)
-			v1Admin.GET("/enter",controller.GetAllPass)
-			v1Admin.PUT("/:club_id/:status",controller.AuditOne)
+			v1Admin.GET("/not", controller.GetAllNotPass)
+			v1Admin.GET("/enter", controller.GetAllPass)
+			v1Admin.PUT("/:club_id/:status", controller.AuditOne)
+			v1Admin.POST("/ad/:ad_id", controller.UploadAD)
 		}
-
 
 	}
 

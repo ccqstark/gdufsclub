@@ -133,7 +133,7 @@ func UploadTplProfile(c *gin.Context) {
 
 	//生成不重复文件名
 	fileName := util.Md5SaltCrypt(fmt.Sprintf("%s%s", file.Filename, time.Now().String()))
-	fileDir := fmt.Sprintf("%s/%d%s/", imageConf.ProfilePath, time.Now().Year(), time.Now().Month().String())
+	fileDir := fmt.Sprintf("%s/", imageConf.ProfilePath)
 
 	//判断文件夹是否存在
 	isExist := util.IsExists(fileDir)
@@ -143,7 +143,14 @@ func UploadTplProfile(c *gin.Context) {
 
 	//保存至服务器指定目录
 	filepath := fmt.Sprintf("%s%s%s", fileDir, fileName, fileExt)
-	c.SaveUploadedFile(file, filepath)
+	fileNameExt := fmt.Sprintf("%s%s", fileName, fileExt)
+	if err:=c.SaveUploadedFile(file, filepath);err!=nil{
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "上传失败!",
+		})
+		return
+	}
 
 	//写入数据库
 	session := sessions.Default(c)
@@ -162,7 +169,7 @@ func UploadTplProfile(c *gin.Context) {
 			"code": 200,
 			"msg":  "上传成功!",
 			"result": gin.H{
-				"path": filepath,
+				"path": fileNameExt,
 			},
 		})
 	} else {

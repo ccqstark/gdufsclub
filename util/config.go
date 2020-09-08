@@ -43,6 +43,7 @@ type LoggerConf struct {
 type ImageConf struct {
 	LogoPath    string `json:"logo_path"`
 	ProfilePath string `json:"profile_path"`
+	ADPath      string `json:"ad_path"`
 }
 
 //全局

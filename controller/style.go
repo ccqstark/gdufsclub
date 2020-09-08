@@ -40,8 +40,8 @@ func GetStyle(c *gin.Context) {
 		session.Save()
 		c.JSON(http.StatusOK, gin.H{
 			"code": 200,
+			"club_name": style.ClubName,
 			"template": gin.H{
-				"club_name":       style.ClubName,
 				"style_name":      style.StyleName,
 				"style_sex":       style.StyleSex,
 				"style_class":     style.StyleClass,
