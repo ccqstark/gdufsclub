@@ -49,12 +49,15 @@ func LoadRouter() *gin.Engine {
 			v1Club.POST("/info", controller.SettleNewClub)
 			v1Club.POST("/logo", controller.UploadClubLogo)
 
+			//社团登录
+			v1Club.POST("login",controller.ClubLogin)
+
 			//搜索
 			v1Club.GET("/search", controller.SearchClub)
 
 			//获取面试者分页列表
-			v1Club.GET("/user/total_page/:progress", controller.GetUserTotalPage)
-			v1Club.GET("/user_list", controller.GetUserListBrief)
+			v1Club.GET("/interviewee/total_page/:progress", controller.GetUserTotalPage)
+			v1Club.GET("/interviewee_list", controller.GetUserListBrief)
 
 			//社团获取面试者信息
 			v1Club.GET("/user_resume/:club_id/:user_id", controller.GetUserResume)

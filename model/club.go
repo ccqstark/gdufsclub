@@ -19,13 +19,20 @@ type Club struct {
 }
 
 type UserList struct {
-	UserID int
-	Name   string
-	Sex    string
-	Class  string
-	Phone  string
-	Wechat string
+	UserID int    `gorm:"column:submitter_id"`
+	Name   string `gorm:"column:name"`
+	Sex    string `gorm:"column:sex"`
+	Class  string `gorm:"column:class"`
+	Phone  string `gorm:"column:phone"`
+	Wechat string `gorm:"column:wechat"`
 }
+
+type ClubAccount struct {
+	Account  string `json:"account"`
+	Password string `json:"password"`
+}
+
+const recordPerPage = 3
 
 //插入新的社团
 func InsertNewClub(club *Club) (int, bool) {
@@ -86,26 +93,44 @@ func QueryUserTotalPage(clubID int, progress int) (int, bool) {
 
 	var process Process
 	total := 0
-	if result := db.Model(&process).Where("club_ID=? and progress=? and pass <> ?", clubID, progress-1, 2).Count(&total); result.Error != nil {
+	if result := db.Model(&process).Where("club_ID=? and progress=?", clubID, progress).Count(&total); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return 0, false
 	}
 
-	return total, true
+	var pageFloat float32 = float32(total / recordPerPage)
+	var pageInt float32 = float32(int(pageFloat))
+	if (pageFloat - pageInt) > 0{
+		return int(pageInt), true
+	} else {
+		return int(pageInt+1), true
+	}
 }
 
 //生成这一轮用户通过者用户基本信息列表
-func QueryUserListBrief(clubID int, progress int, numberRows int, begin int) ([]UserList, bool) {
+func QueryUserListBrief(clubID int, progress int, page int) ([]UserList, bool) {
 
 	//基本信息: 姓名，性别，班级，手机号，微信号
-	//先获取通过了的id, 再通过id查信息, 分页
 	var userList []UserList
-	if result := db.Table("process").Where("club_ID=? and progress=? and result <> ?", clubID, progress-1, 2).
-		Joins("left join resume on resume.user_id=process.user_id").
-		Select("user_id,name,sex,class,phone,wechat, pass").
-		Order("user_id").Limit(numberRows).Offset(begin).Find(&userList); result.Error != nil {
+	//原生sql子查询，获取当前面的面试者列表
+	sql := "SELECT b.submitter_id, b.name, b.sex, b.class, b.phone, " +
+		"b.wechat, a.result FROM process a, resume b " +
+		"WHERE a.user_id = b.submitter_id AND a.club_id = ? AND a.progress = ?;"
+	if result := db.Raw(sql, clubID, progress).Scan(&userList);result.Error != nil{
 		middleware.Log.Error(result.Error.Error())
 		return []UserList{}, false
+	}
+
+	//计算页面第一条和最后一条文位置
+	startRecord := (page-1) * recordPerPage
+	endRecord := startRecord + recordPerPage
+	//分页，用切片截取
+	if startRecord > len(userList){
+		return []UserList{}, false
+	}else if endRecord > len(userList){
+		userList = userList[startRecord:]
+	} else {
+		userList = userList[startRecord:endRecord]
 	}
 
 	return userList, true
@@ -131,14 +156,29 @@ func QueryPasser(clubID int, progress int) []int {
 }
 
 //通过ID数组批量获取用户提交的报名表上的信息
-func GainInfoByArray(clubID int, userID []int) ([]Resume,bool){
+func GainInfoByArray(clubID int, userID []int) ([]Resume, bool) {
 
 	var resumeArr []Resume
-	if result := db.Where("club_id=? and submitter_id IN (?)",clubID,userID).
-		Find(&resumeArr);result.Error != nil{
+	if result := db.Where("club_id=? and submitter_id IN (?)", clubID, userID).
+		Find(&resumeArr); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
-		return []Resume{},false
+		return []Resume{}, false
 	}
 
-	return resumeArr,true
+	return resumeArr, true
+}
+
+func JudgePassword(account string, password string) (Club, bool) {
+	var club Club
+	if result := db.Where("club_account=?", account).Take(&club); result.Error != nil {
+		middleware.Log.Error(result.Error.Error())
+		return Club{}, false
+	}
+
+	if util.Md5SaltCrypt(password) == club.ClubPassword {
+		return club, true
+	} else {
+		return club, false
+	}
+
 }

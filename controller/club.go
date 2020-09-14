@@ -24,6 +24,7 @@ func init() {
 	Segmenter.LoadDictionary("./pkg/sego/data/dictionary.txt")
 }
 
+//社团入住
 func SettleNewClub(c *gin.Context) {
 	var club model.Club
 	if err := c.ShouldBind(&club); err != nil {
@@ -215,7 +216,7 @@ func GetUserTotalPage(c *gin.Context) {
 	}
 }
 
-//获取对应面试轮数的用户列表
+//获取对应面试轮数的用户列表, 某一页
 func GetUserListBrief(c *gin.Context) {
 
 	progressStr := c.Query("progress")
@@ -224,14 +225,8 @@ func GetUserListBrief(c *gin.Context) {
 		middleware.Log.Error(err.Error())
 	}
 
-	rowsStr := c.Query("rows")
-	rows, err := strconv.Atoi(rowsStr)
-	if err != nil {
-		middleware.Log.Error(err.Error())
-	}
-
-	beginStr := c.Query("begin")
-	begin, err := strconv.Atoi(beginStr)
+	pageStr := c.Query("page")
+	page, err := strconv.Atoi(pageStr)
 	if err != nil {
 		middleware.Log.Error(err.Error())
 	}
@@ -247,7 +242,7 @@ func GetUserListBrief(c *gin.Context) {
 		return
 	}
 
-	if userList, ok := model.QueryUserListBrief(clubID.(int), progress, rows, begin); ok == true {
+	if userList, ok := model.QueryUserListBrief(clubID.(int), progress, page); ok == true {
 		c.IndentedJSON(http.StatusOK, userList)
 	} else {
 		c.JSON(http.StatusOK, gin.H{
@@ -406,4 +401,38 @@ func GetExcel(c *gin.Context) {
 		"msg":      "导出成功",
 		"filename": fileNameExt,
 	})
+}
+
+//社团登录
+func ClubLogin(c *gin.Context) {
+
+	var clubAccount model.ClubAccount
+	if err := c.ShouldBind(&clubAccount); err != nil {
+		middleware.Log.Error(err.Error())
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "发生某种错误了呢",
+		})
+		return
+	}
+
+	if club, ok := model.JudgePassword(clubAccount.Account, clubAccount.Password); ok == true {
+		//记录登录状态
+		session := sessions.Default(c)
+		session.Set("club_id", club.ClubID)
+		session.Save()
+
+		c.JSON(http.StatusOK, gin.H{
+			"code": 200,
+			"club_name":club.ClubName,
+			"logo":club.Logo,
+			"total_progress":club.TotalProgress,
+			"msg":  "登录成功",
+		})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "用户名或密码错误",
+		})
+	}
 }
