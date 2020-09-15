@@ -32,7 +32,6 @@ type ClubAccount struct {
 	Password string `json:"password"`
 }
 
-const recordPerPage = 3
 
 //插入新的社团
 func InsertNewClub(club *Club) (int, bool) {
@@ -89,26 +88,26 @@ func SearchByWord(cutWord []string) []Club {
 }
 
 //当前面用户总页数
-func QueryUserTotalPage(clubID int, progress int) (int, bool) {
-
-	var process Process
-	total := 0
-	if result := db.Model(&process).Where("club_ID=? and progress=?", clubID, progress).Count(&total); result.Error != nil {
-		middleware.Log.Error(result.Error.Error())
-		return 0, false
-	}
-
-	var pageFloat float32 = float32(total / recordPerPage)
-	var pageInt float32 = float32(int(pageFloat))
-	if (pageFloat - pageInt) > 0{
-		return int(pageInt), true
-	} else {
-		return int(pageInt+1), true
-	}
-}
+//func QueryUserTotalPage(clubID int, progress int) (int, bool) {
+//
+//	var process Process
+//	total := 0
+//	if result := db.Model(&process).Where("club_ID=? and progress=?", clubID, progress).Count(&total); result.Error != nil {
+//		middleware.Log.Error(result.Error.Error())
+//		return 0, false
+//	}
+//
+//	var pageFloat float32 = float32(total / recordPerPage)
+//	var pageInt float32 = float32(int(pageFloat))
+//	if (pageFloat - pageInt) > 0{
+//		return int(pageInt), true
+//	} else {
+//		return int(pageInt+1), true
+//	}
+//}
 
 //生成这一轮用户通过者用户基本信息列表
-func QueryUserListBrief(clubID int, progress int, page int) ([]UserList, bool) {
+func QueryUserListBrief(clubID int, progress int) ([]UserList, bool) {
 
 	//基本信息: 姓名，性别，班级，手机号，微信号
 	var userList []UserList
@@ -122,16 +121,16 @@ func QueryUserListBrief(clubID int, progress int, page int) ([]UserList, bool) {
 	}
 
 	//计算页面第一条和最后一条文位置
-	startRecord := (page-1) * recordPerPage
-	endRecord := startRecord + recordPerPage
-	//分页，用切片截取
-	if startRecord > len(userList){
-		return []UserList{}, false
-	}else if endRecord > len(userList){
-		userList = userList[startRecord:]
-	} else {
-		userList = userList[startRecord:endRecord]
-	}
+	//startRecord := (page-1) * recordPerPage
+	//endRecord := startRecord + recordPerPage
+	////分页，用切片截取
+	//if startRecord > len(userList){
+	//	return []UserList{}, false
+	//}else if endRecord > len(userList){
+	//	userList = userList[startRecord:]
+	//} else {
+	//	userList = userList[startRecord:endRecord]
+	//}
 
 	return userList, true
 }

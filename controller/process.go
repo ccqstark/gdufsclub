@@ -23,7 +23,7 @@ func GetProcess(c *gin.Context) {
 	}
 
 	if progress, ok := model.QueryProcess(userID.(int)); ok == true {
-		c.IndentedJSON(http.StatusOK,progress)
+		c.IndentedJSON(http.StatusOK, progress)
 	} else {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
@@ -69,3 +69,39 @@ func OperateOne(c *gin.Context) {
 	}
 }
 
+//批量通过面试者
+func PassBatch(c *gin.Context) {
+
+	var batchUser model.BatchUser
+	if err := c.ShouldBind(&batchUser); err != nil {
+		middleware.Log.Error(err.Error())
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "发生某种错误了呢",
+		})
+		return
+	}
+
+	session := sessions.Default(c)
+	clubID := session.Get("club_id")
+	session.Save()
+	if clubID == nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "暂未登录",
+		})
+		return
+	}
+
+	if ok := model.PassBatchInterviewee(batchUser.Interviewee, clubID.(int), batchUser.Progress); ok == true {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 200,
+			"msg":  "操作成功",
+		})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "操作失败",
+		})
+	}
+}

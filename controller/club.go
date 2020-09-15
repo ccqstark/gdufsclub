@@ -184,39 +184,39 @@ func SearchClub(c *gin.Context) {
 }
 
 //获取一共的页数
-func GetUserTotalPage(c *gin.Context) {
+//func GetUserTotalPage(c *gin.Context) {
+//
+//	progressStr := c.Param("progress")
+//	progress, err := strconv.Atoi(progressStr)
+//	if err != nil {
+//		middleware.Log.Error(err.Error())
+//	}
+//
+//	session := sessions.Default(c)
+//	clubID := session.Get("club_id")
+//	session.Save()
+//	if clubID == nil {
+//		c.JSON(http.StatusOK, gin.H{
+//			"code": 400,
+//			"msg":  "暂未登录",
+//		})
+//		return
+//	}
+//
+//	if page, ok := model.QueryUserTotalPage(clubID.(int), progress); ok == true {
+//		c.JSON(http.StatusOK, gin.H{
+//			"code":  200,
+//			"total": page,
+//		})
+//	} else {
+//		c.JSON(http.StatusOK, gin.H{
+//			"code": 400,
+//			"msg":  "查询失败",
+//		})
+//	}
+//}
 
-	progressStr := c.Param("progress")
-	progress, err := strconv.Atoi(progressStr)
-	if err != nil {
-		middleware.Log.Error(err.Error())
-	}
-
-	session := sessions.Default(c)
-	clubID := session.Get("club_id")
-	session.Save()
-	if clubID == nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code": 400,
-			"msg":  "暂未登录",
-		})
-		return
-	}
-
-	if page, ok := model.QueryUserTotalPage(clubID.(int), progress); ok == true {
-		c.JSON(http.StatusOK, gin.H{
-			"code":  200,
-			"total": page,
-		})
-	} else {
-		c.JSON(http.StatusOK, gin.H{
-			"code": 400,
-			"msg":  "查询失败",
-		})
-	}
-}
-
-//获取对应面试轮数的用户列表, 某一页
+//获取对应面试轮数的用户列表
 func GetUserListBrief(c *gin.Context) {
 
 	progressStr := c.Query("progress")
@@ -225,12 +225,6 @@ func GetUserListBrief(c *gin.Context) {
 		middleware.Log.Error(err.Error())
 	}
 
-	pageStr := c.Query("page")
-	page, err := strconv.Atoi(pageStr)
-	if err != nil {
-		middleware.Log.Error(err.Error())
-	}
-
 	session := sessions.Default(c)
 	clubID := session.Get("club_id")
 	session.Save()
@@ -242,7 +236,7 @@ func GetUserListBrief(c *gin.Context) {
 		return
 	}
 
-	if userList, ok := model.QueryUserListBrief(clubID.(int), progress, page); ok == true {
+	if userList, ok := model.QueryUserListBrief(clubID.(int), progress); ok == true {
 		c.IndentedJSON(http.StatusOK, userList)
 	} else {
 		c.JSON(http.StatusOK, gin.H{

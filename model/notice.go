@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"github.com/ccqstark/gdufsclub/middleware"
 )
 
@@ -37,14 +38,11 @@ func IsNoticeExist(clubID int, progress int, pass int) bool {
 //	return notice, true
 //}
 
-
-
-
 //用户查看公告
 func QueryNotice(clubID int, progress int, pass int) (Notice, bool) {
 
 	var notice Notice
-	if result := db.Where("club_id=? and progress=? and pass=? and publish=?", clubID, progress, pass,1).Take(&notice); result.Error != nil {
+	if result := db.Where("club_id=? and progress=? and pass=? and publish=?", clubID, progress, pass, 1).Take(&notice); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return Notice{}, false
 	}
@@ -69,6 +67,7 @@ func InsertNewNotice(notice *Notice) (int, bool) {
 	return id, true
 }
 
+//更新公告
 func UpdateNotice(notice *Notice) bool {
 
 	if result := db.Save(&notice); result.Error != nil {
@@ -82,8 +81,15 @@ func UpdateNotice(notice *Notice) bool {
 //公告统一发布
 func MakeNoticePublished(clubID int, progress int) bool {
 
-	var notice Notice
-	if result := db.Model(&notice).Where("club_id=? and progress=?", clubID, progress).Update("publish", 1); result.Error != nil {
+	sql1 := fmt.Sprintf("UPDATE notice SET publish=1 WHERE club_id=%d and progress=%d;", clubID, progress)
+	if result := db.Exec(sql1); result.Error != nil {
+		middleware.Log.Error(result.Error.Error())
+		return false
+	}
+
+	//面试轮数+1
+	sql2 := fmt.Sprintf("UPDATE process SET progress=%d,result=0 WHERE club_id=%d and progress=%d;", progress+1, clubID, progress)
+	if result := db.Exec(sql2); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return false
 	}

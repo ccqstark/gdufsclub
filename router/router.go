@@ -56,7 +56,7 @@ func LoadRouter() *gin.Engine {
 			v1Club.GET("/search", controller.SearchClub)
 
 			//获取面试者分页列表
-			v1Club.GET("/interviewee/total_page/:progress", controller.GetUserTotalPage)
+			//v1Club.GET("/interviewee/total_page/:progress", controller.GetUserTotalPage)
 			v1Club.GET("/interviewee_list", controller.GetUserListBrief)
 
 			//社团获取面试者信息
@@ -109,6 +109,7 @@ func LoadRouter() *gin.Engine {
 		{
 			v1Process.GET("/:club_id", controller.GetProcess)
 			v1Process.PUT("/result", controller.OperateOne)
+			v1Process.PUT("/batch", controller.PassBatch)
 		}
 
 		//evaluate

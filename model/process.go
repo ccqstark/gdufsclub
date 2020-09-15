@@ -1,7 +1,9 @@
 package model
 
 import (
+	"fmt"
 	"github.com/ccqstark/gdufsclub/middleware"
+	"strings"
 )
 
 type Process struct {
@@ -16,6 +18,11 @@ type Process struct {
 type ProcessUser struct {
 	UserID int `json:"user_id"`
 	Pass   int `json:"pass"`
+}
+
+type BatchUser struct {
+	Interviewee []string `json:"interviewee"`
+	Progress    int      `json:"progress"`
 }
 
 //获取用户所有的面试进程
@@ -70,14 +77,22 @@ func QueryInterviewResult(userID int, clubID int) (int, bool) {
 func OperateOnePerson(clubID int, userID int, pass int) bool {
 
 	var process Process
-	if result := db.Where("club_id=? and user_id=?", clubID, userID).Take(&process); result.Error != nil {
+	if result := db.Model(&process).Where("club_id=? and user_id=?", clubID, userID).Update("result", pass);
+		result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return false
 	}
-	process.Progress = process.Progress + 1
-	process.Result = pass
 
-	if result := db.Save(&process); result.Error != nil {
+	return true
+}
+
+//批量通过面试者
+func PassBatchInterviewee(batch []string, clubID int, progress int) bool {
+
+	batchStr := strings.Join(batch, ",")
+	sql := fmt.Sprintf("UPDATE process SET result=1 WHERE club_id=%d and progress=%d and user_id IN (%s);",clubID,progress,batchStr)
+
+	if result := db.Exec(sql); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return false
 	}
