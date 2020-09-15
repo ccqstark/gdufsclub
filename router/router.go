@@ -111,6 +111,16 @@ func LoadRouter() *gin.Engine {
 			v1Process.PUT("/result", controller.OperateOne)
 		}
 
+		//evaluate
+		v1Evaluate := v1Group.Group("/evaluate")
+		{
+			v1Evaluate.GET("",controller.GetAEvaluate)
+			v1Evaluate.POST("",controller.NewAEvaluate)
+			v1Evaluate.PUT("",controller.ModifyEvaluate)
+
+		}
+
+
 		//admin
 		v1Admin := v1Group.Group("/admin")
 		{

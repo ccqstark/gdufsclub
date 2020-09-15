@@ -168,6 +168,7 @@ func GainInfoByArray(clubID int, userID []int) ([]Resume, bool) {
 	return resumeArr, true
 }
 
+//登录时判断密码
 func JudgePassword(account string, password string) (Club, bool) {
 	var club Club
 	if result := db.Where("club_account=?", account).Take(&club); result.Error != nil {

@@ -49,6 +49,7 @@ func UpdateResumeProfile(id int, path string) bool {
 	return true
 }
 
+//用户查看自己提交的报名简历
 func QueryResume(userID int, clubID int) (Resume, bool) {
 
 	var resume Resume
@@ -60,6 +61,7 @@ func QueryResume(userID int, clubID int) (Resume, bool) {
 	return resume, true
 }
 
+//更新简历信息
 func UpdateResumeInfo(resume *Resume) bool {
 
 	if result := db.Save(&resume); result.Error != nil {

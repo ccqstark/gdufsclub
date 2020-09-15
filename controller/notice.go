@@ -13,15 +13,15 @@ import (
 func GetNotice(c *gin.Context) {
 
 	progressStr := c.Query("progress")
-	progress, err1 := strconv.Atoi(progressStr)
-	if err1 != nil {
-		middleware.Log.Error(err1.Error())
+	progress, err := strconv.Atoi(progressStr)
+	if err != nil {
+		middleware.Log.Error(err.Error())
 	}
 
 	passStr := c.Query("pass")
-	pass, err2 := strconv.Atoi(passStr)
-	if err2 != nil {
-		middleware.Log.Error(err2.Error())
+	pass, err := strconv.Atoi(passStr)
+	if err != nil {
+		middleware.Log.Error(err.Error())
 	}
 
 	session := sessions.Default(c)
