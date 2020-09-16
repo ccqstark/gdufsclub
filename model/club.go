@@ -87,25 +87,6 @@ func SearchByWord(cutWord []string) []Club {
 	return clubGather
 }
 
-//当前面用户总页数
-//func QueryUserTotalPage(clubID int, progress int) (int, bool) {
-//
-//	var process Process
-//	total := 0
-//	if result := db.Model(&process).Where("club_ID=? and progress=?", clubID, progress).Count(&total); result.Error != nil {
-//		middleware.Log.Error(result.Error.Error())
-//		return 0, false
-//	}
-//
-//	var pageFloat float32 = float32(total / recordPerPage)
-//	var pageInt float32 = float32(int(pageFloat))
-//	if (pageFloat - pageInt) > 0{
-//		return int(pageInt), true
-//	} else {
-//		return int(pageInt+1), true
-//	}
-//}
-
 //生成这一轮用户通过者用户基本信息列表
 func QueryUserListBrief(clubID int, progress int) ([]UserList, bool) {
 

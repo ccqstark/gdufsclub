@@ -29,10 +29,12 @@
       <change beforePath="$PROJECT_DIR$/controller/club.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/club.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/controller/notice.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/notice.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/controller/resume.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/resume.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/template.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/template.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/user.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/club.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/club.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/notice.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/notice.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/resume.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/resume.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/process.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/process.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/style.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/style.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/user.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/router/router.go" beforeDir="false" afterPath="$PROJECT_DIR$/router/router.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

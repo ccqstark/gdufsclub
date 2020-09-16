@@ -110,7 +110,6 @@ func UploadClubLogo(c *gin.Context) {
 		return
 	}
 
-	//写入数据库
 	session := sessions.Default(c)
 	clubID := session.Get("club_id")
 	session.Save()
@@ -123,7 +122,7 @@ func UploadClubLogo(c *gin.Context) {
 	}
 
 	//插入数据库
-	if ok := model.UpdateLogo(clubID.(int), filepath); ok == false {
+	if ok := model.UpdateLogo(clubID.(int), fileNameExt); ok == false {
 		//数据库出错
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
@@ -182,39 +181,6 @@ func SearchClub(c *gin.Context) {
 		})
 	}
 }
-
-//获取一共的页数
-//func GetUserTotalPage(c *gin.Context) {
-//
-//	progressStr := c.Param("progress")
-//	progress, err := strconv.Atoi(progressStr)
-//	if err != nil {
-//		middleware.Log.Error(err.Error())
-//	}
-//
-//	session := sessions.Default(c)
-//	clubID := session.Get("club_id")
-//	session.Save()
-//	if clubID == nil {
-//		c.JSON(http.StatusOK, gin.H{
-//			"code": 400,
-//			"msg":  "暂未登录",
-//		})
-//		return
-//	}
-//
-//	if page, ok := model.QueryUserTotalPage(clubID.(int), progress); ok == true {
-//		c.JSON(http.StatusOK, gin.H{
-//			"code":  200,
-//			"total": page,
-//		})
-//	} else {
-//		c.JSON(http.StatusOK, gin.H{
-//			"code": 400,
-//			"msg":  "查询失败",
-//		})
-//	}
-//}
 
 //获取对应面试轮数的用户列表
 func GetUserListBrief(c *gin.Context) {

@@ -9,62 +9,6 @@ import (
 	"strconv"
 )
 
-//获得社团自己的公告
-//func GetNotice(c *gin.Context) {
-//
-//	progressStr := c.Query("progress")
-//	progress, err := strconv.Atoi(progressStr)
-//	if err != nil {
-//		middleware.Log.Error(err.Error())
-//	}
-//
-//	passStr := c.Query("pass")
-//	pass, err := strconv.Atoi(passStr)
-//	if err != nil {
-//		middleware.Log.Error(err.Error())
-//	}
-//
-//	session := sessions.Default(c)
-//	clubID := session.Get("club_id")
-//	session.Save()
-//	if clubID == nil {
-//		c.JSON(http.StatusOK, gin.H{
-//			"code": 400,
-//			"msg":  "暂未登录",
-//		})
-//		return
-//	}
-//
-//	//公告是否存在
-//	if !model.IsNoticeExist(clubID.(int), progress, pass) {
-//		//不存在
-//		c.JSON(http.StatusOK, gin.H{
-//			"code": 401,
-//			"msg":  "没有公告",
-//		})
-//		return
-//	}
-//	//存在
-//	if notice, ok := model.QueryNotice(clubID.(int), progress, pass); ok == true {
-//		//设置session:获取到的notice的id、name
-//		session.Set("notice_id", notice.NoticeID)
-//		session.Set("club_name", notice.ClubName)
-//		session.Save()
-//		c.JSON(http.StatusOK, gin.H{
-//			"code": 200,
-//			"notice": gin.H{
-//				"club_name": notice.ClubName,
-//				"content":   notice.Content,
-//			},
-//		})
-//	} else {
-//		c.JSON(http.StatusOK, gin.H{
-//			"code": 400,
-//			"msg":  "公告获取失败",
-//		})
-//	}
-//}
-
 //用户获得社团的公告,根据自己通过与否查看对应的公告
 func GetUserNotice(c *gin.Context) {
 

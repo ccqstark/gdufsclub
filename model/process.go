@@ -7,12 +7,14 @@ import (
 )
 
 type Process struct {
-	ProcessID int    `gorm:"primary_key"`
-	UserID    int    `gorm:"user_id"`
-	ClubID    int    `gorm:"club_id"`
-	ClubName  string `gorm:"club_name"`
-	Progress  int    `gorm:"progress" json:"progress"`
-	Result    int    `gorm:"result" json:"result"`
+	ProcessID     int    `gorm:"primary_key"`
+	UserID        int    `gorm:"user_id"`
+	ClubID        int    `gorm:"club_id"`
+	Logo          string `gorm:"logo" json:"logo"`
+	ClubName      string `gorm:"club_name" json:"club_name"`
+	TotalProgress int    `gorm:"total_progress" json:"total_progress"`
+	Progress      int    `gorm:"progress" json:"progress"`
+	Result        int    `gorm:"result" json:"result"`
 }
 
 type ProcessUser struct {
@@ -42,8 +44,10 @@ func QueryProcess(userID int) ([]Process, bool) {
 func CreateProcess(userID int, clubID int) bool {
 
 	var process Process
-	if clubName, ok := QueryClubName(clubID); ok == true {
-		process.ClubName = clubName
+	if club, ok := QueryClubInfo(clubID); ok == true {
+		process.ClubName = club.ClubName
+		process.TotalProgress = club.TotalProgress
+		process.Logo = club.Logo
 	} else {
 		return false
 	}
@@ -90,7 +94,7 @@ func OperateOnePerson(clubID int, userID int, pass int) bool {
 func PassBatchInterviewee(batch []string, clubID int, progress int) bool {
 
 	batchStr := strings.Join(batch, ",")
-	sql := fmt.Sprintf("UPDATE process SET result=1 WHERE club_id=%d and progress=%d and user_id IN (%s);",clubID,progress,batchStr)
+	sql := fmt.Sprintf("UPDATE process SET result=1 WHERE club_id=%d and progress=%d and user_id IN (%s);", clubID, progress, batchStr)
 
 	if result := db.Exec(sql); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())

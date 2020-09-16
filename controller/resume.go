@@ -174,7 +174,7 @@ func UploadResumeProfile(c *gin.Context) {
 		return
 	}
 
-	if ok := model.UpdateResumeProfile(resumeID.(int), filepath); ok == true {
+	if ok := model.UpdateResumeProfile(resumeID.(int), fileNameExt); ok == true {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 200,
 			"msg":  "上传成功!",

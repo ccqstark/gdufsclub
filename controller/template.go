@@ -164,7 +164,7 @@ func UploadTplProfile(c *gin.Context) {
 		return
 	}
 
-	if ok := model.UpdateTplProfile(tplID.(int), filepath); ok == true {
+	if ok := model.UpdateTplProfile(tplID.(int), fileNameExt); ok == true {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 200,
 			"msg":  "上传成功!",

@@ -38,8 +38,8 @@ func LoadRouter() *gin.Engine {
 		//user
 		v1User := v1Group.Group("/user")
 		{
-			v1User.GET("/first", controller.PickFirstUser)
 			v1User.POST("", controller.Demo)
+			v1User.POST("/openid", controller.UserLogin)
 		}
 
 		//club
@@ -56,7 +56,6 @@ func LoadRouter() *gin.Engine {
 			v1Club.GET("/search", controller.SearchClub)
 
 			//获取面试者分页列表
-			//v1Club.GET("/interviewee/total_page/:progress", controller.GetUserTotalPage)
 			v1Club.GET("/interviewee_list", controller.GetUserListBrief)
 
 			//社团获取面试者信息
