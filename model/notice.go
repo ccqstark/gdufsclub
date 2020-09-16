@@ -14,6 +14,7 @@ type Notice struct {
 	Content  string `gorm:"content" json:"content"`
 }
 
+//判断公告存在与否
 func IsNoticeExist(clubID int, progress int, pass int) bool {
 
 	var notice Notice
@@ -25,18 +26,17 @@ func IsNoticeExist(clubID int, progress int, pass int) bool {
 	return true
 }
 
-//社团
-//func ClubQueryNotice(clubID int, progress int, pass int) (Notice, bool) {
-//
-//	var noticeSuccess Notice
-//	var noticeFail Notice
-//	if result := db.Where("club_id=? and progress=? and pass=?", clubID, progress, 1).Take(&notice); result.Error != nil {
-//		middleware.Log.Error(result.Error.Error())
-//		return Notice{}, false
-//	}
-//
-//	return notice, true
-//}
+//社团获取公告
+func ClubQueryNotice(clubID int, progress int) ([]Notice, bool) {
+
+	var notice []Notice
+	if result := db.Where("club_id=? and progress=?", clubID, progress).Find(&notice); result.Error != nil {
+		middleware.Log.Error(result.Error.Error())
+		return []Notice{}, false
+	}
+
+	return notice, true
+}
 
 //用户查看公告
 func QueryNotice(clubID int, progress int, pass int) (Notice, bool) {

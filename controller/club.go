@@ -410,23 +410,59 @@ func ClubLogin(c *gin.Context) {
 		return
 	}
 
-	if club, ok := model.JudgePassword(clubAccount.Account, clubAccount.Password); ok == true {
+	club, ok := model.JudgePassword(clubAccount.Account, clubAccount.Password)
+	if ok == 1 {
 		//记录登录状态
 		session := sessions.Default(c)
 		session.Set("club_id", club.ClubID)
 		session.Save()
 
 		c.JSON(http.StatusOK, gin.H{
-			"code": 200,
-			"club_name":club.ClubName,
-			"logo":club.Logo,
-			"total_progress":club.TotalProgress,
-			"msg":  "登录成功",
+			"code":           200,
+			"club_name":      club.ClubName,
+			"logo":           club.Logo,
+			"total_progress": club.TotalProgress,
+			"msg":            "登录成功",
+		})
+	} else if ok == 2 {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 402,
+			"msg":  "审核未通过",
 		})
 	} else {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
 			"msg":  "用户名或密码错误",
+		})
+	}
+}
+
+//社团获取对应面公告
+func ClubGetNotice(c *gin.Context) {
+
+	progressStr := c.Param("progress")
+	progress, err := strconv.Atoi(progressStr)
+	if err != nil {
+		middleware.Log.Error(err.Error())
+	}
+
+	session := sessions.Default(c)
+	clubID := session.Get("club_id")
+	session.Save()
+	if clubID == nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "暂未登录",
+		})
+		return
+	}
+
+	if notice, ok := model.ClubQueryNotice(clubID.(int), progress); ok == true {
+		c.IndentedJSON(http.StatusOK, notice)
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "获取失败",
 		})
 	}
 }

@@ -25,13 +25,13 @@ type UserList struct {
 	Class  string `gorm:"column:class"`
 	Phone  string `gorm:"column:phone"`
 	Wechat string `gorm:"column:wechat"`
+	Result int    `gorm:"column:result"`
 }
 
 type ClubAccount struct {
 	Account  string `json:"account"`
 	Password string `json:"password"`
 }
-
 
 //插入新的社团
 func InsertNewClub(club *Club) (int, bool) {
@@ -115,7 +115,7 @@ func QueryUserListBrief(clubID int, progress int) ([]UserList, bool) {
 	sql := "SELECT b.submitter_id, b.name, b.sex, b.class, b.phone, " +
 		"b.wechat, a.result FROM process a, resume b " +
 		"WHERE a.user_id = b.submitter_id AND a.club_id = ? AND a.progress = ?;"
-	if result := db.Raw(sql, clubID, progress).Scan(&userList);result.Error != nil{
+	if result := db.Raw(sql, clubID, progress).Scan(&userList); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return []UserList{}, false
 	}
@@ -168,17 +168,22 @@ func GainInfoByArray(clubID int, userID []int) ([]Resume, bool) {
 }
 
 //登录时判断密码
-func JudgePassword(account string, password string) (Club, bool) {
+func JudgePassword(account string, password string) (Club, int) {
 	var club Club
 	if result := db.Where("club_account=?", account).Take(&club); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
-		return Club{}, false
+		return Club{}, 0
 	}
 
+	//0 错误   1 可以登录   2 审核不通过
 	if util.Md5SaltCrypt(password) == club.ClubPassword {
-		return club, true
+		if club.Pass == 1 {
+			return club, 1
+		} else {
+			return club, 2
+		}
 	} else {
-		return club, false
+		return Club{}, 0
 	}
 
 }

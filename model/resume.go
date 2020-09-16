@@ -49,7 +49,7 @@ func UpdateResumeProfile(id int, path string) bool {
 	return true
 }
 
-//用户查看自己提交的报名简历
+//查看自己提交的报名简历
 func QueryResume(userID int, clubID int) (Resume, bool) {
 
 	var resume Resume

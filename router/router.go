@@ -50,7 +50,7 @@ func LoadRouter() *gin.Engine {
 			v1Club.POST("/logo", controller.UploadClubLogo)
 
 			//社团登录
-			v1Club.POST("login",controller.ClubLogin)
+			v1Club.POST("login", controller.ClubLogin)
 
 			//搜索
 			v1Club.GET("/search", controller.SearchClub)
@@ -62,8 +62,11 @@ func LoadRouter() *gin.Engine {
 			//社团获取面试者信息
 			v1Club.GET("/user_resume/:club_id/:user_id", controller.GetUserResume)
 
+			//社团获取公告
+			v1Club.GET("/notice/:progress", controller.ClubGetNotice)
+
 			//导出excel
-			v1Club.GET("/excel/:progress",controller.GetExcel)
+			v1Club.GET("/excel/:progress", controller.GetExcel)
 		}
 
 		//template
@@ -78,10 +81,12 @@ func LoadRouter() *gin.Engine {
 		//resume
 		v1Resume := v1Group.Group("/resume")
 		{
-			v1Resume.GET("/:club_id", controller.GetResume)
+			v1Resume.GET("/for_user/:club_id", controller.GetResume)
 			v1Resume.POST("/info", controller.FillNewResume)
 			v1Resume.POST("/profile", controller.UploadResumeProfile)
 			v1Resume.PUT("/info", controller.ModifyResume)
+			//社团获取用户简历和面试状态
+			v1Resume.GET("/for_club/:user_id", controller.ClubGetResume)
 		}
 
 		//style
@@ -96,18 +101,16 @@ func LoadRouter() *gin.Engine {
 		//notice
 		v1Notice := v1Group.Group("/notice")
 		{
-			v1Notice.GET("", controller.GetNotice)
-			v1Notice.GET("/user_notice", controller.GetUserNotice)
+			v1Notice.GET("", controller.GetUserNotice)
 			v1Notice.POST("", controller.PostNewNotice)
 			v1Notice.PUT("", controller.ModifyNotice)
 			v1Notice.PUT("/publish/:progress", controller.PublishNotice)
-
 		}
 
 		//process
 		v1Process := v1Group.Group("/process")
 		{
-			v1Process.GET("/:club_id", controller.GetProcess)
+			v1Process.GET("", controller.GetProcess)
 			v1Process.PUT("/result", controller.OperateOne)
 			v1Process.PUT("/batch", controller.PassBatch)
 		}
@@ -115,12 +118,11 @@ func LoadRouter() *gin.Engine {
 		//evaluate
 		v1Evaluate := v1Group.Group("/evaluate")
 		{
-			v1Evaluate.GET("",controller.GetAEvaluate)
-			v1Evaluate.POST("",controller.NewAEvaluate)
-			v1Evaluate.PUT("",controller.ModifyEvaluate)
+			v1Evaluate.GET("", controller.GetAEvaluate)
+			v1Evaluate.POST("", controller.NewAEvaluate)
+			v1Evaluate.PUT("", controller.ModifyEvaluate)
 
 		}
-
 
 		//admin
 		v1Admin := v1Group.Group("/admin")

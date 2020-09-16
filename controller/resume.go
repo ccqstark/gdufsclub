@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-//获取报名表
+//用户获取自己填的报名表
 func GetResume(c *gin.Context) {
 
 	clubIDStr := c.Param("club_id")
@@ -154,7 +154,7 @@ func UploadResumeProfile(c *gin.Context) {
 	//保存至服务器指定目录
 	filepath := fmt.Sprintf("%s%s%s", fileDir, fileName, fileExt)
 	fileNameExt := fmt.Sprintf("%s%s", fileName, fileExt)
-	if err:=c.SaveUploadedFile(file, filepath);err!=nil{
+	if err := c.SaveUploadedFile(file, filepath); err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
 			"msg":  "上传失败!",
@@ -237,6 +237,64 @@ func ModifyResume(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
 			"msg":  "修改失败",
+		})
+	}
+}
+
+//社团获取用户的报名表
+func ClubGetResume(c *gin.Context) {
+
+	userIDStr := c.Param("user_id")
+	userID, err := strconv.Atoi(userIDStr)
+	if err != nil {
+		middleware.Log.Error(err.Error())
+	}
+
+	session := sessions.Default(c)
+	clubID := session.Get("club_id")
+	session.Save()
+	if clubID == nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "暂未登录",
+		})
+		return
+	}
+
+	if resume, ok := model.QueryResume(userID, clubID.(int)); ok == true {
+		if result, oks := model.QueryInterviewResult(userID, clubID.(int)); oks == true {
+			//获取报名表和面试进程状态
+			c.JSON(http.StatusOK, gin.H{
+				"code": 200,
+				"basic": gin.H{
+					"name":      resume.Name,
+					"sex":       resume.Sex,
+					"class":     resume.Class,
+					"phone":     resume.Phone,
+					"wechat":    resume.Wechat,
+					"image":     resume.Image,
+				},
+				"other":gin.H{
+					"reason":    resume.Reason,
+					"self":      resume.Self,
+					"hobby":     resume.Hobby,
+					"advantage": resume.Advantage,
+					"email":     resume.Email,
+					"extra":     resume.Extra,
+				},
+				"result": result,
+			})
+		} else {
+			c.JSON(http.StatusOK, gin.H{
+				"code": 400,
+				"msg":  "查询不到面试状态",
+			})
+		}
+
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 401,
+			"msg":  "还未向此社团提交过报名表",
 		})
 	}
 }
