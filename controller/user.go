@@ -12,8 +12,8 @@ import (
 
 const (
 	code2sessionURL = "https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code"
-	appID           = "你的AppID"
-	appSecret       = "你的AppSecret"
+	appID           = "wx573a58a5e1d18401"
+	appSecret       = "558b4f2eb9c8c060a507cbdde6924f70"
 )
 
 func Demo(c *gin.Context) {

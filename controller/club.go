@@ -432,3 +432,40 @@ func ClubGetNotice(c *gin.Context) {
 		})
 	}
 }
+
+//社团修改信息
+func ModifyClubInfo(c *gin.Context) {
+
+	var clubModInfo model.ClubModInfo
+	if err := c.ShouldBind(&clubModInfo); err != nil {
+		middleware.Log.Error(err.Error())
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "发生某种错误了呢",
+		})
+		return
+	}
+
+	session := sessions.Default(c)
+	clubID := session.Get("club_id")
+	session.Save()
+	if clubID == nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "未登录或找不到对应社团",
+		})
+		return
+	}
+
+	if ok := model.UpdateClubInfo(clubModInfo, clubID.(int)); ok == true {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 200,
+			"msg":  "操作成功",
+		})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "操作失败",
+		})
+	}
+}

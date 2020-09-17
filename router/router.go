@@ -66,6 +66,9 @@ func LoadRouter() *gin.Engine {
 
 			//导出excel
 			v1Club.GET("/excel/:progress", controller.GetExcel)
+
+			//修改社团信息
+			v1Club.PUT("/info", controller.ModifyClubInfo)
 		}
 
 		//template

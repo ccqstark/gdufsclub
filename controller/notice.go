@@ -75,8 +75,8 @@ func GetUserNotice(c *gin.Context) {
 //发布新公告
 func PostNewNotice(c *gin.Context) {
 
-	var notice model.Notice
-	if err := c.ShouldBind(&notice); err != nil {
+	var twoNotice model.TwoNotice
+	if err := c.ShouldBind(&twoNotice); err != nil {
 		middleware.Log.Error(err.Error())
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
@@ -96,10 +96,10 @@ func PostNewNotice(c *gin.Context) {
 		return
 	}
 
+	var clubName string
+	var ok bool
 	//查找社团名
-	if clubName, ok := model.QueryClubName(clubID.(int)); ok == true {
-		notice.ClubName = clubName
-	} else {
+	if clubName, ok = model.QueryClubName(clubID.(int)); ok == false {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
 			"msg":  "社团信息存在异常",
@@ -107,15 +107,11 @@ func PostNewNotice(c *gin.Context) {
 		return
 	}
 
-	notice.ClubID = clubID.(int)
-	if noticeID, ok := model.InsertNewNotice(&notice); ok == true {
-		session.Set("notice_id", noticeID)
-		session.Save()
+	if ok := model.InsertNewNotice(&twoNotice, clubID.(int), clubName); ok == true {
 
 		c.JSON(http.StatusOK, gin.H{
-			"code":      200,
-			"msg":       "公告发布成功",
-			"notice_id": noticeID,
+			"code": 200,
+			"msg":  "公告发布成功",
 		})
 	} else {
 		c.JSON(http.StatusOK, gin.H{
@@ -128,8 +124,8 @@ func PostNewNotice(c *gin.Context) {
 //修改公告
 func ModifyNotice(c *gin.Context) {
 
-	var notice model.Notice
-	if err := c.ShouldBind(&notice); err != nil {
+	var twoNotice model.TwoNotice
+	if err := c.ShouldBind(&twoNotice); err != nil {
 		middleware.Log.Error(err.Error())
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
@@ -139,19 +135,8 @@ func ModifyNotice(c *gin.Context) {
 	}
 
 	session := sessions.Default(c)
-	noticeID := session.Get("notice_id")
 	clubID := session.Get("club_id")
-	clubName := session.Get("club_name")
 	session.Save()
-
-	if noticeID == nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code": 400,
-			"msg":  "公告未创建",
-		})
-		return
-	}
-
 	if clubID == nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
@@ -160,18 +145,7 @@ func ModifyNotice(c *gin.Context) {
 		return
 	}
 
-	if clubName == nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code": 400,
-			"msg":  "社团信息出现问题了",
-		})
-		return
-	}
-
-	notice.NoticeID = noticeID.(int)
-	notice.ClubID = clubID.(int)
-	notice.ClubName = clubName.(string)
-	if ok := model.UpdateNotice(&notice); ok == true {
+	if ok := model.UpdateNotice(&twoNotice, clubID.(int)); ok == true {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 200,
 			"msg":  "修改成功",

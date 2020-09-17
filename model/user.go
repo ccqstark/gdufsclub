@@ -21,6 +21,7 @@ type Login struct {
 	Code string `json:"code"`
 }
 
+//用户授权登录
 func AuthUser(openid string) (int, bool) {
 
 	var user User

@@ -14,6 +14,12 @@ type Notice struct {
 	Content  string `gorm:"content" json:"content"`
 }
 
+type TwoNotice struct {
+	Progress       int    `json:"progress"`
+	SuccessContent string `json:"success_content"`
+	FailureContent string `json:"failure_content"`
+}
+
 //判断公告存在与否
 func IsNoticeExist(clubID int, progress int, pass int) bool {
 
@@ -51,26 +57,50 @@ func QueryNotice(clubID int, progress int, pass int) (Notice, bool) {
 }
 
 //插入新的公告
-func InsertNewNotice(notice *Notice) (int, bool) {
-
-	//插入记录
-	if result := db.Create(&notice); result.Error != nil {
-		middleware.Log.Error(result.Error.Error())
-		return 0, false
+func InsertNewNotice(twoNotice *TwoNotice, clubID int, clubName string) bool {
+	//成功的公告
+	notice1 := Notice{
+		ClubID:   clubID,
+		ClubName: clubName,
+		Progress: twoNotice.Progress,
+		Pass:     1,
+		Content:  twoNotice.SuccessContent,
+	}
+	//失败的公告
+	notice2 := Notice{
+		ClubID:   clubID,
+		ClubName: clubName,
+		Progress: twoNotice.Progress,
+		Pass:     2,
+		Content:  twoNotice.FailureContent,
 	}
 
-	//获取刚刚插入的记录的id
-	var _id []int
-	db.Raw("select LAST_INSERT_ID() as id").Pluck("id", &_id)
-	id := _id[0]
+	//插入记录
+	if result := db.Create(&notice1); result.Error != nil {
+		middleware.Log.Error(result.Error.Error())
+		return false
+	}
 
-	return id, true
+	if result := db.Create(&notice2); result.Error != nil {
+		middleware.Log.Error(result.Error.Error())
+		return false
+	}
+
+	return true
 }
 
 //更新公告
-func UpdateNotice(notice *Notice) bool {
+func UpdateNotice(twoNotice *TwoNotice, clubID int) bool {
 
-	if result := db.Save(&notice); result.Error != nil {
+	var notice Notice
+	if result := db.Model(&notice).Where("club_id=? and progress=? and pass=1",clubID,twoNotice.Progress).
+		Update("content",twoNotice.SuccessContent);result.Error != nil {
+		middleware.Log.Error(result.Error.Error())
+		return false
+	}
+
+	if result := db.Model(&notice).Where("club_id=? and progress=? and pass=2",clubID,twoNotice.Progress).
+		Update("content",twoNotice.FailureContent);result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return false
 	}

@@ -33,6 +33,14 @@ type ClubAccount struct {
 	Password string `json:"password"`
 }
 
+type ClubModInfo struct {
+	ClubName      string `json:"club_name"`
+	ClubEmail     string `json:"club_email"`
+	ClubWechat    string `json:"club_wechat"`
+	ClubPhone     string `json:"club_phone"`
+	TotalProgress int    `json:"total_progress"`
+}
+
 //插入新的社团
 func InsertNewClub(club *Club) (int, bool) {
 	//md5加密
@@ -92,6 +100,7 @@ func QueryUserListBrief(clubID int, progress int) ([]UserList, bool) {
 
 	//基本信息: 姓名，性别，班级，手机号，微信号
 	var userList []UserList
+	var userList2 []UserList
 	//原生sql子查询，获取当前面的面试者列表
 	sql := "SELECT b.submitter_id, b.name, b.sex, b.class, b.phone, " +
 		"b.wechat, a.result FROM process a, resume b " +
@@ -101,17 +110,20 @@ func QueryUserListBrief(clubID int, progress int) ([]UserList, bool) {
 		return []UserList{}, false
 	}
 
-	//计算页面第一条和最后一条文位置
-	//startRecord := (page-1) * recordPerPage
-	//endRecord := startRecord + recordPerPage
-	////分页，用切片截取
-	//if startRecord > len(userList){
-	//	return []UserList{}, false
-	//}else if endRecord > len(userList){
-	//	userList = userList[startRecord:]
-	//} else {
-	//	userList = userList[startRecord:endRecord]
-	//}
+	//留存
+	sql = "SELECT b.submitter_id, b.name, b.sex, b.class, b.phone, " +
+		"b.wechat, a.result FROM process a, resume b " +
+		"WHERE a.user_id = b.submitter_id AND a.club_id = ? AND a.progress > ?;"
+
+	if result := db.Raw(sql, clubID, progress).Scan(&userList2); result.Error != nil {
+		middleware.Log.Error(result.Error.Error())
+		return []UserList{}, false
+	}
+	//合并在一个切片
+	for _, v := range userList2 {
+		v.Result = 1
+		userList = append(userList, v)
+	}
 
 	return userList, true
 }
@@ -120,15 +132,26 @@ func QueryUserListBrief(clubID int, progress int) ([]UserList, bool) {
 func QueryPasser(clubID int, progress int) []int {
 
 	var process []Process
+	var process2 []Process
 	if result := db.Where("club_ID=? and progress=? and result=?", clubID, progress, 1).
 		Select("user_id").Find(&process); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return []int{}
 	}
 
+	if result := db.Where("club_ID=? and progress>?", clubID, progress).
+		Select("user_id").Find(&process2); result.Error != nil {
+		middleware.Log.Error(result.Error.Error())
+		return []int{}
+	}
+	//用于存储所有通过者的id
 	var passerID []int
 
 	for _, pro := range process {
+		passerID = append(passerID, pro.UserID)
+	}
+
+	for _, pro := range process2 {
 		passerID = append(passerID, pro.UserID)
 	}
 
@@ -167,4 +190,23 @@ func JudgePassword(account string, password string) (Club, int) {
 		return Club{}, 0
 	}
 
+}
+
+//修改社团信息
+func UpdateClubInfo(info ClubModInfo, clubID int) bool {
+
+	var club Club
+	if result := db.Model(&club).Where("club_id=?", clubID).
+		Updates(map[string]interface{}{
+			"club_name":      info.ClubName,
+			"club_phone":     info.ClubPhone,
+			"club_email":     info.ClubEmail,
+			"club_wechat":    info.ClubWechat,
+			"total_progress": info.TotalProgress,
+		}); result.Error != nil {
+		middleware.Log.Error(result.Error.Error())
+		return false
+	}
+
+	return true
 }
