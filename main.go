@@ -9,8 +9,7 @@ func main() {
 
 	//加载并启动路由
 	r := router.LoadRouter()
-
-
+	
 	r.Run(":"+util.Cfg.AppPort)  //:::8060
 }
 
