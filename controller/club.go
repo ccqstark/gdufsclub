@@ -469,3 +469,19 @@ func ModifyClubInfo(c *gin.Context) {
 		})
 	}
 }
+
+//获取社团信息
+func GetAllClubInfo(c *gin.Context) {
+
+	//不用登录
+	if club, ok := model.QueryAllClubInfo(); ok == true {
+
+		c.IndentedJSON(http.StatusOK, club)
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "查询失败",
+		})
+		return
+	}
+}

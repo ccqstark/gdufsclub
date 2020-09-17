@@ -52,6 +52,9 @@ func LoadRouter() *gin.Engine {
 			//社团登录
 			v1Club.POST("login", controller.ClubLogin)
 
+			//获取所有社团
+			v1Club.GET("/all", controller.GetAllClubInfo)
+
 			//搜索
 			v1Club.GET("/search", controller.SearchClub)
 
@@ -133,6 +136,7 @@ func LoadRouter() *gin.Engine {
 			v1Admin.GET("/enter", controller.GetAllPass)
 			v1Admin.PUT("/:club_id/:status", controller.AuditOne)
 			v1Admin.POST("/ad/:ad_id", controller.UploadAD)
+			v1Admin.GET("/field", controller.GetAllCustomField)
 		}
 
 	}

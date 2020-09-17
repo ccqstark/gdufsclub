@@ -82,6 +82,43 @@ func UpdateLogo(id int, path string) bool {
 	return true
 }
 
+//用社团id查找社团名
+func QueryClubName(id int) (string, bool) {
+
+	var club Club
+	if result := db.Where("club_id=?", id).Take(&club); result.Error != nil {
+		middleware.Log.Error(result.Error.Error())
+		return "", false
+	}
+
+	return club.ClubName, true
+}
+
+//用社团ID获取社团总信息
+func QueryClubInfo(id int) (Club, bool) {
+
+	var club Club
+	if result := db.Where("club_id=?", id).Take(&club); result.Error != nil {
+		middleware.Log.Error(result.Error.Error())
+		return Club{}, false
+	}
+
+	return club, true
+}
+
+//查找所有社团信息
+func QueryAllClubInfo() ([]Club, bool) {
+
+	var club []Club
+	if result := db.Select("club_id,club_name,club_email,club_phone,club_wechat,total_progress,logo").
+		Where("pass=?", 1).Find(&club); result.Error != nil {
+		middleware.Log.Error(result.Error.Error())
+		return []Club{}, false
+	}
+
+	return club, true
+}
+
 //通过关键词搜索
 func SearchByWord(cutWord []string) []Club {
 

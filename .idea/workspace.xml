@@ -26,12 +26,12 @@
   <component name="ChangeListManager">
     <list default="true" id="eb5e9959-3a0d-4446-a66b-62daa4faaf44" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/admin.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/admin.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/controller/club.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/club.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/notice.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/notice.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/user.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/admin.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/admin.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/club.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/club.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/notice.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/notice.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/user.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/process.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/process.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/style.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/style.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/router/router.go" beforeDir="false" afterPath="$PROJECT_DIR$/router/router.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -165,22 +165,22 @@
       <screen x="0" y="0" width="1536" height="834" />
     </state>
     <state x="583" y="321" key="GrepConsoleSound/0.0.1536.834@0.0.1536.834" timestamp="1598955165459" />
-    <state width="1493" height="384" key="GridCell.Tab.0.bottom" timestamp="1600338358699">
+    <state width="1493" height="358" key="GridCell.Tab.0.bottom" timestamp="1600351975145">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
-    <state width="1493" height="384" key="GridCell.Tab.0.bottom/0.0.1536.834@0.0.1536.834" timestamp="1600338358699" />
-    <state width="1493" height="384" key="GridCell.Tab.0.center" timestamp="1600338358699">
+    <state width="1493" height="358" key="GridCell.Tab.0.bottom/0.0.1536.834@0.0.1536.834" timestamp="1600351975145" />
+    <state width="1493" height="358" key="GridCell.Tab.0.center" timestamp="1600351975145">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
-    <state width="1493" height="384" key="GridCell.Tab.0.center/0.0.1536.834@0.0.1536.834" timestamp="1600338358699" />
-    <state width="1493" height="384" key="GridCell.Tab.0.left" timestamp="1600338358699">
+    <state width="1493" height="358" key="GridCell.Tab.0.center/0.0.1536.834@0.0.1536.834" timestamp="1600351975145" />
+    <state width="1493" height="358" key="GridCell.Tab.0.left" timestamp="1600351975144">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
-    <state width="1493" height="384" key="GridCell.Tab.0.left/0.0.1536.834@0.0.1536.834" timestamp="1600338358699" />
-    <state width="1493" height="384" key="GridCell.Tab.0.right" timestamp="1600338358699">
+    <state width="1493" height="358" key="GridCell.Tab.0.left/0.0.1536.834@0.0.1536.834" timestamp="1600351975144" />
+    <state width="1493" height="358" key="GridCell.Tab.0.right" timestamp="1600351975145">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
-    <state width="1493" height="384" key="GridCell.Tab.0.right/0.0.1536.834@0.0.1536.834" timestamp="1600338358699" />
+    <state width="1493" height="358" key="GridCell.Tab.0.right/0.0.1536.834@0.0.1536.834" timestamp="1600351975145" />
     <state x="10" y="57" width="1474" height="710" key="SettingsEditor" timestamp="1599313090777">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
@@ -189,10 +189,10 @@
       <screen x="0" y="0" width="1536" height="834" />
     </state>
     <state x="286" y="0" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.0.1536.834@0.0.1536.834" timestamp="1600096850918" />
-    <state x="431" y="155" width="672" height="678" key="search.everywhere.popup" timestamp="1599816989323">
+    <state x="431" y="155" width="672" height="678" key="search.everywhere.popup" timestamp="1600347788224">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
-    <state x="431" y="155" width="672" height="678" key="search.everywhere.popup/0.0.1536.834@0.0.1536.834" timestamp="1599816989323" />
+    <state x="431" y="155" width="672" height="678" key="search.everywhere.popup/0.0.1536.834@0.0.1536.834" timestamp="1600347788224" />
     <state x="491" y="329" key="vcs.readOnlyHandler.ReadOnlyStatusDialog" timestamp="1599292478107">
       <screen x="0" y="0" width="1536" height="834" />
     </state>

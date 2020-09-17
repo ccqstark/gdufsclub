@@ -105,7 +105,7 @@ func UploadAD(c *gin.Context) {
 	//保存至服务器指定目录
 	filepath := fmt.Sprintf("%s%s%s", fileDir, fileName, fileExt)
 	fileNameExt := fmt.Sprintf("%s%s", fileName, fileExt)
-	if err:=c.SaveUploadedFile(file, filepath);err!=nil{
+	if err := c.SaveUploadedFile(file, filepath); err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
 			"msg":  "上传失败!",
@@ -120,4 +120,20 @@ func UploadAD(c *gin.Context) {
 			"path": fileNameExt,
 		},
 	})
+}
+
+func GetAllCustomField(c *gin.Context) {
+
+	if field, ok := model.QueryAllCustomField(); ok == true {
+		c.JSON(http.StatusOK, gin.H{
+			"code":  200,
+			"field": field,
+		})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "获取失败",
+		})
+	}
+
 }

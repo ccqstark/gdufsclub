@@ -37,31 +37,6 @@ func InsertNewStyle(style *Style) (int, bool) {
 	return id, true
 }
 
-//用社团id查找社团名
-func QueryClubName(id int) (string, bool) {
-
-	var club Club
-	if result := db.Where("club_id=?", id).Take(&club); result.Error != nil {
-		middleware.Log.Error(result.Error.Error())
-		return "", false
-	}
-
-	return club.ClubName, true
-}
-
-//用社团ID获取社团总信息
-func QueryClubInfo(id int)(Club, bool){
-
-	var club Club
-	if result := db.Where("club_id=?", id).Take(&club); result.Error != nil {
-		middleware.Log.Error(result.Error.Error())
-		return Club{}, false
-	}
-
-	return club, true
-}
-
-
 func IsStyleExist(clubID int) bool {
 
 	var style Style

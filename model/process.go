@@ -40,7 +40,7 @@ func QueryProcess(userID int) ([]Process, bool) {
 
 }
 
-//提交报表时就创建面试进程
+//提交报名表时就创建面试进程
 func CreateProcess(userID int, clubID int) bool {
 
 	var process Process
