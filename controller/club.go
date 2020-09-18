@@ -470,6 +470,40 @@ func ModifyClubInfo(c *gin.Context) {
 	}
 }
 
+//获取单个社团信息
+func GetOneClubInfo(c *gin.Context) {
+
+	session := sessions.Default(c)
+	clubID := session.Get("club_id")
+	session.Save()
+	if clubID == nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "暂未登录",
+		})
+		return
+	}
+
+	if club, ok := model.QueryClubInfo(clubID.(int)); ok == true {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 200,
+			"data": gin.H{
+				"club_name":      club.ClubName,
+				"club_phone":     club.ClubPhone,
+				"club_email":     club.ClubEmail,
+				"club_wechat":    club.ClubWechat,
+				"total_progress": club.TotalProgress,
+				"logo":           club.Logo,
+			},
+		})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "获取社团信息失败",
+		})
+	}
+}
+
 //获取社团信息
 func GetAllClubInfo(c *gin.Context) {
 
