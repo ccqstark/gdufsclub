@@ -55,8 +55,63 @@ func GetUserNotice(c *gin.Context) {
 		})
 		return
 	}
+
+
 	//存在
 	if notice, ok := model.QueryNotice(clubID, progress, pass); ok == true {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 200,
+			"notice": gin.H{
+				"club_name": notice.ClubName,
+				"content":   notice.Content,
+			},
+		})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "公告暂未发布",
+		})
+	}
+}
+
+//用户获取成功的公告
+func GetSuccessNotice(c *gin.Context) {
+
+	clubIDStr := c.Query("club_id")
+	clubID, err1 := strconv.Atoi(clubIDStr)
+	if err1 != nil {
+		middleware.Log.Error(err1.Error())
+	}
+
+	progressStr := c.Query("progress")
+	progress, err2 := strconv.Atoi(progressStr)
+	if err2 != nil {
+		middleware.Log.Error(err2.Error())
+	}
+
+	session := sessions.Default(c)
+	userID := session.Get("user_id")
+	session.Save()
+	if userID == nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "暂未登录",
+		})
+		return
+	}
+
+	//公告是否存在
+	if !model.IsNoticeExist(clubID, progress, 1) {
+		//不存在
+		c.JSON(http.StatusOK, gin.H{
+			"code": 401,
+			"msg":  "公告暂未发布",
+		})
+		return
+	}
+
+	//存在
+	if notice, ok := model.QueryNotice(clubID, progress, 1); ok == true {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 200,
 			"notice": gin.H{

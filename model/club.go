@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"github.com/ccqstark/gdufsclub/middleware"
 	"github.com/ccqstark/gdufsclub/util"
 )
@@ -20,6 +21,7 @@ type Club struct {
 
 type UserList struct {
 	UserID int    `gorm:"column:submitter_id"`
+	ClubID int    `gorm:"column:club_id`
 	Name   string `gorm:"column:name"`
 	Sex    string `gorm:"column:sex"`
 	Class  string `gorm:"column:class"`
@@ -137,30 +139,67 @@ func QueryUserListBrief(clubID int, progress int) ([]UserList, bool) {
 
 	//基本信息: 姓名，性别，班级，手机号，微信号
 	var userList []UserList
-	var userList2 []UserList
-	//原生sql子查询，获取当前面的面试者列表
-	sql := "SELECT b.submitter_id, b.name, b.sex, b.class, b.phone, " +
-		"b.wechat, a.result FROM process a, resume b " +
-		"WHERE a.user_id = b.submitter_id AND a.club_id = ? AND a.progress = ?;"
-	if result := db.Raw(sql, clubID, progress).Scan(&userList); result.Error != nil {
-		middleware.Log.Error(result.Error.Error())
-		return []UserList{}, false
+	var userIDArr []int
+	type Parr struct {
+		ProcessID int
+		UserID int
+		Result int
 	}
+	//var userListClean []UserList
+	//var userList2 []UserList
+	//原生sql子查询，获取当前面的面试者列表
+	//sql := fmt.Sprintf("SELECT b.submitter_id, b.name, b.sex, b.class, b.phone, b.wechat, a.result FROM process a, resume b WHERE a.user_id = b.submitter_id AND a.club_id = %d AND a.progress >= %d;", clubID, progress)
+	//
+	//fmt.Println(sql)
+	//
+	//if result := db.Exec(sql).Scan(&userList); result.Error != nil {
+	//	middleware.Log.Error(result.Error.Error())
+	//	return []UserList{}, false
+	//}
 
 	//留存
-	sql = "SELECT b.submitter_id, b.name, b.sex, b.class, b.phone, " +
-		"b.wechat, a.result FROM process a, resume b " +
-		"WHERE a.user_id = b.submitter_id AND a.club_id = ? AND a.progress > ?;"
+	//sql := "SELECT b.submitter_id, b.name, b.sex, b.class, b.phone, " +
+	//	"b.wechat,a.club_id, a.result FROM process a, resume b " +
+	//	"WHERE a.user_id = b.submitter_id AND a.club_id = ? AND a.progress = ?;"
 
-	if result := db.Raw(sql, clubID, progress).Scan(&userList2); result.Error != nil {
-		middleware.Log.Error(result.Error.Error())
-		return []UserList{}, false
+	//db.Table("process").Select("process_id").Where("club_id=? and progress=?",clubID,progress).
+	//	Scan(processIDArr)
+	sql := "SELECT process_id,user_id,result FROM process WHERE club_id=? and progress>=?"
+	var parr []Parr
+	db.Raw(sql,clubID,progress).Scan(&parr)
+
+	fmt.Println(parr)
+
+	for _,v := range parr{
+		userIDArr = append(userIDArr, v.UserID)
 	}
+
+
+	sql = "SELECT submitter_id, name, sex, class, phone, wechat FROM resume WHERE club_id=? and submitter_id IN (?)"
+	db.Raw(sql,clubID,userIDArr).Scan(&userList)
+
+	for i := range userList{
+		userList[i].Result = parr[i].Result
+		fmt.Println(parr[i])
+	}
+
+	fmt.Println(userList)
+	//if result := db.Raw(sql, clubID, progress).Scan(&userList); result.Error != nil {
+	//	middleware.Log.Error(result.Error.Error())
+	//	return []UserList{}, false
+	//}
 	//合并在一个切片
-	for _, v := range userList2 {
-		v.Result = 1
-		userList = append(userList, v)
-	}
+	//for _, v := range userList2 {
+	//	v.Result = 1
+	//	userList = append(userList, v)
+	//}
+
+	//洗掉别的社团
+	//for _, v := range userList {
+	//	if v.ClubID == clubID {
+	//		userListClean = append(userListClean, v)
+	//	}
+	//}
 
 	return userList, true
 }

@@ -16,7 +16,7 @@ type Template struct {
 	TemplateHobby     string `gorm:"column:template_hobby" json:"template_hobby"`
 	TemplateSelf      string `gorm:"column:template_self" json:"template_self"`
 	TemplateAdvantage string `gorm:"column:template_advantage" json:"template_advantage"`
-	TemplateImage     string `gorm:"column:template_image"`
+	TemplateImage     string `gorm:"column:template_image" json:"profile"`
 }
 
 //判断用户是否创建了模板
@@ -72,6 +72,7 @@ func UpdateTplProfile(id int, path string) bool {
 	return true
 }
 
+//获取模板信息
 func UpdateTemplateInfo(tpl *Template) bool {
 
 	if result := db.Save(&tpl); result.Error != nil {

@@ -54,7 +54,7 @@ func CreateProcess(userID int, clubID int) bool {
 
 	process.UserID = userID
 	process.ClubID = clubID
-	process.Progress = 0
+	process.Progress = 1
 	process.Result = 0
 
 	if result := db.Create(&process); result.Error != nil {

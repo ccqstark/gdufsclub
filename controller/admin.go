@@ -26,6 +26,7 @@ func GetAllNotPass(c *gin.Context) {
 	}
 }
 
+//获得所有通过者
 func GetAllPass(c *gin.Context) {
 
 	if enterClub, ok := model.QueryAllPass(); ok == true {
@@ -122,6 +123,7 @@ func UploadAD(c *gin.Context) {
 	})
 }
 
+//获得所有自定义字段
 func GetAllCustomField(c *gin.Context) {
 
 	if field, ok := model.QueryAllCustomField(); ok == true {

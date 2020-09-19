@@ -250,6 +250,12 @@ func ClubGetResume(c *gin.Context) {
 		middleware.Log.Error(err.Error())
 	}
 
+	nowProgressStr := c.Param("now_progress")
+	nowProgress, err := strconv.Atoi(nowProgressStr)
+	if err != nil {
+		middleware.Log.Error(err.Error())
+	}
+
 	session := sessions.Default(c)
 	clubID := session.Get("club_id")
 	session.Save()
@@ -261,20 +267,31 @@ func ClubGetResume(c *gin.Context) {
 		return
 	}
 
+	var can bool
 	if resume, ok := model.QueryResume(userID, clubID.(int)); ok == true {
 		if result, oks := model.QueryInterviewResult(userID, clubID.(int)); oks == true {
+			if !model.IsNoticeExist(clubID.(int), nowProgress, 1) {
+				//不存在,可以修改通过状态
+				can = true
+			} else {
+				if published, okss := model.CheckIfNoticePublish(clubID.(int), nowProgress); okss == true {
+					//如果已经发布，就不能再修改状态
+					can = !published
+				}
+			}
+
 			//获取报名表和面试进程状态
 			c.JSON(http.StatusOK, gin.H{
 				"code": 200,
 				"basic": gin.H{
-					"name":      resume.Name,
-					"sex":       resume.Sex,
-					"class":     resume.Class,
-					"phone":     resume.Phone,
-					"wechat":    resume.Wechat,
-					"image":     resume.Image,
+					"name":   resume.Name,
+					"sex":    resume.Sex,
+					"class":  resume.Class,
+					"phone":  resume.Phone,
+					"wechat": resume.Wechat,
+					"image":  resume.Image,
 				},
-				"other":gin.H{
+				"other": gin.H{
 					"reason":    resume.Reason,
 					"self":      resume.Self,
 					"hobby":     resume.Hobby,
@@ -283,7 +300,9 @@ func ClubGetResume(c *gin.Context) {
 					"extra":     resume.Extra,
 				},
 				"result": result,
+				"can":    can,
 			})
+
 		} else {
 			c.JSON(http.StatusOK, gin.H{
 				"code": 400,

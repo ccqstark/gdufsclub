@@ -24,6 +24,7 @@ type Style struct {
 func InsertNewStyle(style *Style) (int, bool) {
 
 	//插入记录
+	style.StyleClass = 1
 	if result := db.Create(&style); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return 0, false
@@ -37,6 +38,7 @@ func InsertNewStyle(style *Style) (int, bool) {
 	return id, true
 }
 
+//判断样式表是否存在
 func IsStyleExist(clubID int) bool {
 
 	var style Style
@@ -48,6 +50,7 @@ func IsStyleExist(clubID int) bool {
 	return true
 }
 
+//获取表样式
 func QueryStyle(clubID int) (Style, bool) {
 
 	var style Style
@@ -59,8 +62,10 @@ func QueryStyle(clubID int) (Style, bool) {
 	return style, true
 }
 
+//更新样式表
 func UpdateStyle(style *Style) bool {
 
+	style.StyleClass = 1
 	if result := db.Save(&style); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return false

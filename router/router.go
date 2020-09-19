@@ -38,7 +38,7 @@ func LoadRouter() *gin.Engine {
 		//user
 		v1User := v1Group.Group("/user")
 		{
-			v1User.POST("", controller.Demo)
+			v1User.POST("/test/:club_id", controller.Demo)
 			v1User.POST("/openid", controller.UserLogin)
 		}
 
@@ -93,7 +93,7 @@ func LoadRouter() *gin.Engine {
 			v1Resume.POST("/profile", controller.UploadResumeProfile)
 			v1Resume.PUT("/info", controller.ModifyResume)
 			//社团获取用户简历和面试状态
-			v1Resume.GET("/for_club/:user_id", controller.ClubGetResume)
+			v1Resume.GET("/for_club/:user_id/:now_progress", controller.ClubGetResume)
 		}
 
 		//style
@@ -109,6 +109,7 @@ func LoadRouter() *gin.Engine {
 		v1Notice := v1Group.Group("/notice")
 		{
 			v1Notice.GET("", controller.GetUserNotice)
+			v1Notice.GET("/success", controller.GetSuccessNotice)
 			v1Notice.POST("", controller.PostNewNotice)
 			v1Notice.PUT("", controller.ModifyNotice)
 			v1Notice.PUT("/publish/:progress", controller.PublishNotice)

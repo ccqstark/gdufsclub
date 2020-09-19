@@ -12,6 +12,7 @@ type Notice struct {
 	Progress int    `gorm:"progress" json:"progress"`
 	Pass     int    `gorm:"pass" json:"pass"`
 	Content  string `gorm:"content" json:"content"`
+	Publish  int    `gorm:"publish"`
 }
 
 type TwoNotice struct {
@@ -48,7 +49,7 @@ func ClubQueryNotice(clubID int, progress int) ([]Notice, bool) {
 func QueryNotice(clubID int, progress int, pass int) (Notice, bool) {
 
 	var notice Notice
-	if result := db.Where("club_id=? and progress=? and pass=? and publish=?", clubID, progress, pass, 1).Take(&notice); result.Error != nil {
+	if result := db.Where("club_id=? and progress=? and pass=? and publish=1", clubID, progress, pass).Take(&notice); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return Notice{}, false
 	}
@@ -93,14 +94,14 @@ func InsertNewNotice(twoNotice *TwoNotice, clubID int, clubName string) bool {
 func UpdateNotice(twoNotice *TwoNotice, clubID int) bool {
 
 	var notice Notice
-	if result := db.Model(&notice).Where("club_id=? and progress=? and pass=1",clubID,twoNotice.Progress).
-		Update("content",twoNotice.SuccessContent);result.Error != nil {
+	if result := db.Model(&notice).Where("club_id=? and progress=? and pass=1", clubID, twoNotice.Progress).
+		Update("content", twoNotice.SuccessContent); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return false
 	}
 
-	if result := db.Model(&notice).Where("club_id=? and progress=? and pass=2",clubID,twoNotice.Progress).
-		Update("content",twoNotice.FailureContent);result.Error != nil {
+	if result := db.Model(&notice).Where("club_id=? and progress=? and pass=2", clubID, twoNotice.Progress).
+		Update("content", twoNotice.FailureContent); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return false
 	}
@@ -125,4 +126,20 @@ func MakeNoticePublished(clubID int, progress int) bool {
 	}
 
 	return true
+}
+
+//查看公告是否发布
+func CheckIfNoticePublish(clubID int, nowProgress int) (bool, bool) {
+
+	var notice Notice
+	if result := db.Select("publish").Where("club_id=? and progress=?", clubID, nowProgress).Take(&notice); result.Error != nil {
+		middleware.Log.Error(result.Error.Error())
+		return false, false
+	}
+
+	if notice.Publish == 1 {
+		return true, true
+	} else {
+		return false, true
+	}
 }

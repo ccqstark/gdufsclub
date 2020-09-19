@@ -8,6 +8,7 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
 const (
@@ -17,14 +18,21 @@ const (
 )
 
 func Demo(c *gin.Context) {
+
+	clubIDStr := c.Param("club_id")
+	clubID, err := strconv.Atoi(clubIDStr)
+	if err != nil {
+		middleware.Log.Error(err.Error())
+	}
+
 	session := sessions.Default(c)
 	session.Set("user_id", 65)
-	session.Set("club_id", 33)
+	session.Set("club_id", clubID)
 	session.Save()
 
 	c.JSON(http.StatusOK, gin.H{
 		"user_id": 65,
-		"club_id": 33,
+		"club_id": clubID,
 		"code":    200,
 	})
 }

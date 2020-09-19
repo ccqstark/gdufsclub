@@ -18,7 +18,7 @@ type Resume struct {
 	Advantage   string `gorm:"column:advantage" json:"advantage"`
 	Self        string `gorm:"column:self" json:"self"`
 	Reason      string `gorm:"column:reason" json:"reason"`
-	Image       string `gorm:"column:image"`
+	Image       string `gorm:"column:image" json:"profile"`
 	Extra       string `gorm:"column:extra" json:"extra"`
 }
 
