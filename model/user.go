@@ -28,6 +28,7 @@ func AuthUser(openid string) (int, bool) {
 	user.OpenID = openid
 
 	if db.Where("open_id=?", openid).Take(&user).RecordNotFound() {
+		user.OpenID = openid
 		if result := db.Create(&user); result.Error != nil {
 			middleware.Log.Error(result.Error.Error())
 			return 0, false
@@ -40,6 +41,9 @@ func AuthUser(openid string) (int, bool) {
 
 		return id, true
 	}
+
+	user.OpenID = openid
+	db.Where("open_id=?", openid).Take(&user)
 
 	return user.UserID, true
 }

@@ -60,6 +60,8 @@ func UserLogin(c *gin.Context) {
 		return
 	}
 
+	middleware.Log.Info(openid)
+
 	if userID, ok := model.AuthUser(openid); ok == true {
 		//设置登录状态session
 		session := sessions.Default(c)

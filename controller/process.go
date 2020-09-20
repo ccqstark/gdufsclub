@@ -101,7 +101,7 @@ func PassBatch(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
-			"msg":  "操作失败",
+			"msg":  "请选择要通过的人选",
 		})
 	}
 }

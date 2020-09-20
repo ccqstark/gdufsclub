@@ -138,7 +138,7 @@ func UploadClubLogo(c *gin.Context) {
 			"path": fileNameExt,
 		},
 	})
-	model.UpdateLogo(clubID.(int), fileNameExt)
+
 }
 
 //搜索社团

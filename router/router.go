@@ -18,6 +18,10 @@ func LoadRouter() *gin.Engine {
 	store, _ := redis.NewStore(redisConf.IdleConnection, redisConf.Protocol, redisConf.HostPort, redisConf.Password, []byte(redisConf.Key))
 	r.Use(sessions.Sessions("mysession", store))
 
+	//store := cookie.NewStore([]byte("secret"))
+	//store := cookie.NewStore([]byte("wdnmdcao"))
+	//r.Use(sessions.Sessions("mysession", store))
+
 	//日志中间件
 	r.Use(middleware.LoggerToFile())
 

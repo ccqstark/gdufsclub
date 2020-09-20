@@ -36,6 +36,22 @@ func QueryProcess(userID int) ([]Process, bool) {
 		return []Process{}, false
 	}
 
+	//未发布公告不能看到结果
+	for i := range process{
+		clubIDTemp := process[i].ClubID
+		progressTemp := process[i].Progress
+		ok, published:=CheckIfNoticePublish(clubIDTemp,progressTemp)
+		if ok==true{
+			if published==false{
+				process[i].Result = 0
+			}
+		} else { //未设置公告也看不到结果
+			if published==false{
+				process[i].Result = 0
+			}
+		}
+	}
+
 	return process, true
 
 }

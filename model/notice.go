@@ -118,8 +118,8 @@ func MakeNoticePublished(clubID int, progress int) bool {
 		return false
 	}
 
-	//面试轮数+1
-	sql2 := fmt.Sprintf("UPDATE process SET progress=%d,result=0 WHERE club_id=%d and progress=%d;", progress+1, clubID, progress)
+	//通过的人面试轮数+1
+	sql2 := fmt.Sprintf("UPDATE process SET progress=%d, result=0 WHERE club_id=%d and progress=%d and result=1;", progress+1, clubID, progress)
 	if result := db.Exec(sql2); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return false

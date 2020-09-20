@@ -127,7 +127,7 @@ func GetSuccessNotice(c *gin.Context) {
 	}
 }
 
-//发布新公告
+//插入新公告
 func PostNewNotice(c *gin.Context) {
 
 	var twoNotice model.TwoNotice
@@ -166,12 +166,12 @@ func PostNewNotice(c *gin.Context) {
 
 		c.JSON(http.StatusOK, gin.H{
 			"code": 200,
-			"msg":  "公告发布成功",
+			"msg":  "公告设置成功",
 		})
 	} else {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
-			"msg":  "公告发布失败，请重试",
+			"msg":  "公告设置失败，请重试",
 		})
 	}
 }
@@ -229,6 +229,16 @@ func PublishNotice(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
 			"msg":  "暂未登录",
+		})
+		return
+	}
+
+	ok1:=model.IsNoticeExist(clubID.(int),progress,1)
+	ok2:=model.IsNoticeExist(clubID.(int),progress,2)
+	if (ok1 && ok2)!=true{
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "公告未设置完整",
 		})
 		return
 	}
