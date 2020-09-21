@@ -43,6 +43,10 @@ type ClubModInfo struct {
 	TotalProgress int    `json:"total_progress"`
 }
 
+type ReLogo struct {
+	Logo string `gorm:"column:logo" json:"logo"`
+}
+
 //插入新的社团
 func InsertNewClub(club *Club) (int, bool) {
 	//md5加密
@@ -225,6 +229,13 @@ func UpdateClubInfo(info ClubModInfo, clubID int) bool {
 		middleware.Log.Error(result.Error.Error())
 		return false
 	}
+	
+	db.Model(Process{}).Where("club_id=?",clubID).Updates(map[string]interface{}{
+		"club_name":      info.ClubName,
+		"total_progress": info.TotalProgress,
+	})
+	db.Model(Style{}).Where("club_id=?",clubID).Update("club_name",info.ClubName)
+	db.Model(Notice{}).Where("club_id=?",clubID).Update("club_name",info.ClubName)
 
 	return true
 }

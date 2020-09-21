@@ -163,20 +163,24 @@ func UploadResumeProfile(c *gin.Context) {
 	}
 
 	//写入数据库
-	resumeIDStr := c.PostForm("resume_id")
-	resumeID, err := strconv.Atoi(resumeIDStr)
-	if err != nil {
-		middleware.Log.Error(err.Error())
-	}
-	if resumeID <= 0 {
+	//resumeIDStr := c.PostForm("resume_id")
+	//resumeID, err := strconv.Atoi(resumeIDStr)
+	//if err != nil {
+	//	middleware.Log.Error(err.Error())
+	//}
+	session := sessions.Default(c)
+	resumeID := session.Get("resume_id")
+	session.Save()
+
+	if resumeID == nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
-			"msg":  "找不到当前报名表",
+			"msg":  "找不到此报名表",
 		})
 		return
 	}
 
-	if ok := model.UpdateResumeProfile(resumeID, fileNameExt); ok == true {
+	if ok := model.UpdateResumeProfile(resumeID.(int), fileNameExt); ok == true {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 200,
 			"msg":  "上传成功!",

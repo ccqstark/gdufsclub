@@ -60,11 +60,14 @@ func UserLogin(c *gin.Context) {
 		return
 	}
 
-	middleware.Log.Info(openid)
+	//middleware.Log.Info(openid)
+	//清一下session
+	session := sessions.Default(c)
+	session.Clear()
+	session.Save()
 
 	if userID, ok := model.AuthUser(openid); ok == true {
 		//设置登录状态session
-		session := sessions.Default(c)
 		session.Set("user_id", userID)
 		session.Save()
 

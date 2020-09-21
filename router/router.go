@@ -11,6 +11,8 @@ import (
 
 func LoadRouter() *gin.Engine {
 
+	//gin.SetMode(gin.ReleaseMode)
+
 	r := gin.Default()
 
 	//session:创建基于redis的存储引擎,添加密钥，并使用中间件
@@ -52,6 +54,7 @@ func LoadRouter() *gin.Engine {
 			//社团入住
 			v1Club.POST("/info", controller.SettleNewClub)
 			v1Club.POST("/logo", controller.UploadClubLogo)
+			v1Club.PUT("/relogo", controller.ReUpdateLogo)
 
 			//社团登录
 			v1Club.POST("login", controller.ClubLogin)

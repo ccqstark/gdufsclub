@@ -141,6 +141,49 @@ func UploadClubLogo(c *gin.Context) {
 
 }
 
+//加固注册时logo问题
+func ReUpdateLogo(c *gin.Context){
+
+	var reLogo model.ReLogo
+	if err := c.ShouldBind(&reLogo); err != nil {
+		middleware.Log.Error(err.Error())
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "发生某种错误了呢",
+		})
+		return
+	}
+
+	session := sessions.Default(c)
+	clubID := session.Get("club_id")
+	session.Save()
+	if clubID == nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "未登录或找不到对应社团",
+		})
+		return
+	}
+
+	//插入数据库
+	if ok := model.UpdateLogo(clubID.(int), reLogo.Logo); ok == false {
+		//数据库出错
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "上传失败!",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"code": 200,
+		"msg":  "上传成功!",
+		"result": gin.H{
+			"path": reLogo.Logo,
+		},
+	})
+}
+
 //搜索社团
 func SearchClub(c *gin.Context) {
 
@@ -376,11 +419,14 @@ func ClubLogin(c *gin.Context) {
 		})
 		return
 	}
+	//清一下session
+	session := sessions.Default(c)
+	session.Clear()
+	session.Save()
 
 	club, ok := model.JudgePassword(clubAccount.Account, clubAccount.Password)
 	if ok == 1 {
 		//记录登录状态
-		session := sessions.Default(c)
 		session.Set("club_id", club.ClubID)
 		session.Save()
 
