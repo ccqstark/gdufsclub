@@ -43,10 +43,6 @@ type ClubModInfo struct {
 	TotalProgress int    `json:"total_progress"`
 }
 
-type ReLogo struct {
-	Logo string `gorm:"column:logo" json:"logo"`
-}
-
 //插入新的社团
 func InsertNewClub(club *Club) (int, bool) {
 	//md5加密
@@ -79,18 +75,16 @@ func IsAccountRepeat(accountStr string) bool {
 //更新logo地址
 func UpdateLogo(id int, path string) bool {
 
-	path = "'"+path+"'"
-	//club表
-	sql := fmt.Sprintf("UPDATE club SET logo=%s WHERE club_id=%d", path, id)
-
+	//club表更新
+	sql := fmt.Sprintf("UPDATE club SET logo='%s' WHERE club_id=%d", path, id)
 
 	if result := db.Exec(sql); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return false
 	}
 
-	//process表
-	sql = fmt.Sprintf("UPDATE process SET logo=%s WHERE club_id=%d", path, id)
+	//process表更新
+	sql = fmt.Sprintf("UPDATE process SET logo='%s' WHERE club_id=%d", path, id)
 
 	if result := db.Exec(sql); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
@@ -229,13 +223,13 @@ func UpdateClubInfo(info ClubModInfo, clubID int) bool {
 		middleware.Log.Error(result.Error.Error())
 		return false
 	}
-	
-	db.Model(Process{}).Where("club_id=?",clubID).Updates(map[string]interface{}{
+
+	db.Model(Process{}).Where("club_id=?", clubID).Updates(map[string]interface{}{
 		"club_name":      info.ClubName,
 		"total_progress": info.TotalProgress,
 	})
-	db.Model(Style{}).Where("club_id=?",clubID).Update("club_name",info.ClubName)
-	db.Model(Notice{}).Where("club_id=?",clubID).Update("club_name",info.ClubName)
+	db.Model(Style{}).Where("club_id=?", clubID).Update("club_name", info.ClubName)
+	db.Model(Notice{}).Where("club_id=?", clubID).Update("club_name", info.ClubName)
 
 	return true
 }
@@ -260,8 +254,8 @@ func QueryUserListBrief(clubID int, progress int) ([]UserList, bool) {
 	}
 
 	//转为id数组
-	for _, v := range parr {
-		userIDArr = append(userIDArr, v.UserID)
+	for i := range parr {
+		userIDArr = append(userIDArr, parr[i].UserID)
 	}
 
 	//用用户id查询信息
@@ -270,9 +264,14 @@ func QueryUserListBrief(clubID int, progress int) ([]UserList, bool) {
 		middleware.Log.Error(result.Error.Error())
 		return []UserList{}, false
 	}
+
 	//补充面试结果信息
-	for i := range userList {
-		userList[i].Result = parr[i].Result
+	for i1 := range userList {
+		for i2 := range parr {
+			if userList[i1].UserID == parr[i2].UserID {
+				userList[i1].Result = parr[i2].Result
+			}
+		}
 	}
 
 	return userList, true

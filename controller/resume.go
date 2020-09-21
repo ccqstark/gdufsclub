@@ -15,6 +15,123 @@ import (
 	"time"
 )
 
+//无模板整张报名表二合一
+func ResumeTwoInOne(c *gin.Context) {
+
+	//二合一表信息提取
+	var resume model.Resume
+	resume.Name = c.PostForm("name")
+	resume.Sex = c.PostForm("sex")
+	resume.Class = c.PostForm("class")
+	resume.Phone = c.PostForm("phone")
+	resume.Email = c.PostForm("email")
+	resume.Wechat = c.PostForm("wechat")
+	resume.Hobby = c.PostForm("hobby")
+	resume.Advantage = c.PostForm("advantage")
+	resume.Self = c.PostForm("self")
+	resume.Reason = c.PostForm("reason")
+	resume.Extra = c.PostForm("extra")
+	var err error
+	resume.ClubID, err = strconv.Atoi(c.PostForm("club_id"))
+	if err != nil {
+		middleware.Log.Error(err.Error())
+	}
+
+	var resumeID int
+	var ok bool
+
+	session := sessions.Default(c)
+	submitterID := session.Get("user_id")
+	session.Save()
+	if submitterID == nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "暂未登录",
+		})
+		return
+	}
+
+	resume.SubmitterID = submitterID.(int)
+	if resumeID, ok = model.InsertNewResume(&resume); ok == true {
+
+		//创建面试进程
+		if okk := model.CreateProcess(submitterID.(int), resume.ClubID); okk == false {
+			c.JSON(http.StatusOK, gin.H{
+				"code": 400,
+				"msg":  "无法创建面试流程",
+			})
+			return
+		}
+
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "报名表提交失败，请重试",
+		})
+		return
+	}
+
+	//profile图片
+	imageConf := util.Cfg.Image
+	file, err := c.FormFile("profile")
+	if err != nil {
+		middleware.Log.Error(err.Error())
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "图片获取失败!",
+		})
+		return
+	}
+
+	//判断文件类型是否为图片
+	fileExt := strings.ToLower(path.Ext(file.Filename))
+	if fileExt != ".png" && fileExt != ".jpg" && fileExt != ".gif" && fileExt != ".jpeg" {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "上传失败!只允许png, jpg, gif, jpeg文件",
+		})
+		return
+	}
+
+	//生成不重复文件名
+	fileName := util.Md5SaltCrypt(fmt.Sprintf("%s%s", file.Filename, time.Now().String()))
+	fileDir := fmt.Sprintf("%s/", imageConf.ProfilePath)
+
+	//判断文件夹是否存在
+	isExist := util.IsExists(fileDir)
+	if !isExist {
+		os.Mkdir(fileDir, os.ModePerm)
+	}
+
+	//保存至服务器指定目录
+	filepath := fmt.Sprintf("%s%s%s", fileDir, fileName, fileExt)
+	fileNameExt := fmt.Sprintf("%s%s", fileName, fileExt)
+	if err := c.SaveUploadedFile(file, filepath); err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "上传失败!",
+		})
+		return
+	}
+
+	//写入数据库
+	if ok := model.UpdateResumeProfile(resumeID, fileNameExt); ok == true {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 200,
+			"msg":  "提交成功!",
+			"result": gin.H{
+				"path": fileNameExt,
+			},
+		})
+
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "上传失败",
+		})
+	}
+}
+
 //用户获取自己填的报名表
 func GetResume(c *gin.Context) {
 
@@ -163,11 +280,6 @@ func UploadResumeProfile(c *gin.Context) {
 	}
 
 	//写入数据库
-	//resumeIDStr := c.PostForm("resume_id")
-	//resumeID, err := strconv.Atoi(resumeIDStr)
-	//if err != nil {
-	//	middleware.Log.Error(err.Error())
-	//}
 	session := sessions.Default(c)
 	resumeID := session.Get("resume_id")
 	session.Save()

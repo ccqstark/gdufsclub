@@ -54,7 +54,9 @@ func LoadRouter() *gin.Engine {
 			//社团入住
 			v1Club.POST("/info", controller.SettleNewClub)
 			v1Club.POST("/logo", controller.UploadClubLogo)
-			v1Club.PUT("/relogo", controller.ReUpdateLogo)
+
+			//二合一社团注册接口
+			v1Club.POST("/register", controller.RegisterClub)
 
 			//社团登录
 			v1Club.POST("login", controller.ClubLogin)
@@ -95,6 +97,9 @@ func LoadRouter() *gin.Engine {
 		//resume
 		v1Resume := v1Group.Group("/resume")
 		{
+			//resume二合一
+			v1Resume.POST("/twoinone", controller.ResumeTwoInOne)
+
 			v1Resume.GET("/for_user/:club_id", controller.GetResume)
 			v1Resume.POST("/info", controller.FillNewResume)
 			v1Resume.POST("/profile", controller.UploadResumeProfile)
