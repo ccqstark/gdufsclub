@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"github.com/ccqstark/gdufsclub/middleware"
 )
 
@@ -40,8 +41,19 @@ func InsertNewResume(resume *Resume) (int, bool) {
 
 func UpdateResumeProfile(id int, path string) bool {
 
-	var resume Resume
-	if result := db.Model(&resume).Where("resume_id=?", id).Update("image", path); result.Error != nil {
+	sql := fmt.Sprintf("UPDATE resume SET image='%s' WHERE resume_id=%d", path, id)
+	if result := db.Exec(sql); result.Error != nil {
+		middleware.Log.Error(result.Error.Error())
+		return false
+	}
+
+	return true
+}
+
+func UpdateResumeProfile2(userID int, clubID int, path string) bool {
+
+	sql := fmt.Sprintf("UPDATE resume SET image='%s' WHERE submitter_id=%d and club_id=%d", path, userID, clubID)
+	if result := db.Exec(sql); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return false
 	}

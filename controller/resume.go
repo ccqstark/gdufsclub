@@ -37,9 +37,6 @@ func ResumeTwoInOne(c *gin.Context) {
 		middleware.Log.Error(err.Error())
 	}
 
-	var resumeID int
-	var ok bool
-
 	session := sessions.Default(c)
 	submitterID := session.Get("user_id")
 	session.Save()
@@ -52,7 +49,7 @@ func ResumeTwoInOne(c *gin.Context) {
 	}
 
 	resume.SubmitterID = submitterID.(int)
-	if resumeID, ok = model.InsertNewResume(&resume); ok == true {
+	if _, ok := model.InsertNewResume(&resume); ok == true {
 
 		//创建面试进程
 		if okk := model.CreateProcess(submitterID.(int), resume.ClubID); okk == false {
@@ -115,7 +112,7 @@ func ResumeTwoInOne(c *gin.Context) {
 	}
 
 	//写入数据库
-	if ok := model.UpdateResumeProfile(resumeID, fileNameExt); ok == true {
+	if ok := model.UpdateResumeProfile2(submitterID.(int),resume.ClubID,fileNameExt); ok == true {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 200,
 			"msg":  "提交成功!",

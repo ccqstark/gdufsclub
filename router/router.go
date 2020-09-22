@@ -44,7 +44,7 @@ func LoadRouter() *gin.Engine {
 		//user
 		v1User := v1Group.Group("/user")
 		{
-			v1User.POST("/test/:club_id", controller.Demo)
+			v1User.POST("/test/:club_id/:user_id", controller.Demo)
 			v1User.POST("/openid", controller.UserLogin)
 		}
 

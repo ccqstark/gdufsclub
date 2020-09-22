@@ -25,13 +25,19 @@ func Demo(c *gin.Context) {
 		middleware.Log.Error(err.Error())
 	}
 
+	userIDStr := c.Param("user_id")
+	userID, err := strconv.Atoi(userIDStr)
+	if err != nil {
+		middleware.Log.Error(err.Error())
+	}
+
 	session := sessions.Default(c)
-	session.Set("user_id", 65)
+	session.Set("user_id", userID)
 	session.Set("club_id", clubID)
 	session.Save()
 
 	c.JSON(http.StatusOK, gin.H{
-		"user_id": 65,
+		"user_id": userID,
 		"club_id": clubID,
 		"code":    200,
 	})

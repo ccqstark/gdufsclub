@@ -12,4 +12,5 @@ require (
 	github.com/jinzhu/gorm v1.9.16
 	github.com/sirupsen/logrus v1.6.0
 	github.com/tealeg/xlsx v1.0.5
+	github.com/unrolled/secure v1.0.8
 )
