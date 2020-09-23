@@ -50,16 +50,6 @@ func RegisterClub(c *gin.Context) {
 		return
 	}
 
-	var clubID int
-	var ok bool
-	//插入数据
-	if clubID, ok = model.InsertNewClub(&club); ok == false {
-		c.JSON(http.StatusOK, gin.H{
-			"code": 400,
-			"msg":  "注册失败，请重试",
-		})
-		return
-	}
 
 	//logo图片
 	imageConf := util.Cfg.Image
@@ -104,22 +94,42 @@ func RegisterClub(c *gin.Context) {
 		return
 	}
 
+	club.Logo = fileNameExt
+
 	//插入数据库
-	if ok := model.UpdateLogo(clubID, fileNameExt); ok == true {
-
-		c.JSON(http.StatusOK, gin.H{
-			"code":    200,
-			"msg":     "申请提交成功，请耐心等待后台审核",
-			"club_id": clubID,
-		})
-
-	} else {
-		//数据库出错
+	var clubID int
+	var ok bool
+	//插入数据
+	if clubID, ok = model.InsertNewClub(&club); ok == false {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
-			"msg":  "上传失败!",
+			"msg":  "注册失败，请重试",
 		})
+		return
 	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"code":    200,
+		"msg":     "申请提交成功，请耐心等待后台审核",
+		"club_id": clubID,
+	})
+
+
+	//if ok := model.UpdateLogo(clubID, fileNameExt); ok == true {
+	//
+	//	c.JSON(http.StatusOK, gin.H{
+	//		"code":    200,
+	//		"msg":     "申请提交成功，请耐心等待后台审核",
+	//		"club_id": clubID,
+	//	})
+	//
+	//} else {
+	//	//数据库出错
+	//	c.JSON(http.StatusOK, gin.H{
+	//		"code": 400,
+	//		"msg":  "上传失败!",
+	//	})
+	//}
 
 }
 

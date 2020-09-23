@@ -80,6 +80,7 @@ func UserLogin(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 200,
 			"msg":  "登录成功",
+			"openid":openid,
 		})
 
 	} else {

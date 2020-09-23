@@ -88,6 +88,9 @@ func LoadRouter() *gin.Engine {
 		//template
 		v1Template := v1Group.Group("/template")
 		{
+			//模板二合一
+			v1Template.POST("/twoinone", controller.TplTwoInOne)
+
 			v1Template.GET("", controller.GetTemplate)
 			v1Template.POST("/info", controller.CreateNewTemplate)
 			v1Template.POST("/profile", controller.UploadTplProfile)

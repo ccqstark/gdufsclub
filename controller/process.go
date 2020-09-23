@@ -11,18 +11,19 @@ import (
 //用户查看自己的面试进程
 func GetProcess(c *gin.Context) {
 
-	session := sessions.Default(c)
-	userID := session.Get("user_id")
-	session.Save()
-	if userID == nil {
+	//用openid获取用户id
+	openid := c.Query("openid")
+	var userID int
+	var ok bool
+	if userID, ok = model.GetUserIDByOpenid(openid); ok == false {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
-			"msg":  "暂未登录",
+			"msg":  "查找不到用户",
 		})
 		return
 	}
 
-	if progress, ok := model.QueryProcess(userID.(int)); ok == true {
+	if progress, ok := model.QueryProcess(userID); ok == true {
 		c.IndentedJSON(http.StatusOK, progress)
 	} else {
 		c.JSON(http.StatusOK, gin.H{

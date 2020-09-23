@@ -24,21 +24,21 @@ func GetUserNotice(c *gin.Context) {
 		middleware.Log.Error(err2.Error())
 	}
 
-	session := sessions.Default(c)
-	userID := session.Get("user_id")
-	session.Save()
-	if userID == nil {
+	//用openid获取用户id
+	openid := c.Query("openid")
+	var userID int
+	var ok bool
+	if userID, ok = model.GetUserIDByOpenid(openid); ok == false {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
-			"msg":  "暂未登录",
+			"msg":  "查找不到用户",
 		})
 		return
 	}
 
 	//查询面试结果
 	var pass int
-	var ok bool
-	if pass, ok = model.QueryInterviewResult(userID.(int), clubID); ok == false {
+	if pass, ok = model.QueryInterviewResult(userID, clubID); ok == false {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
 			"msg":  "查询不到面试结果",
@@ -55,7 +55,6 @@ func GetUserNotice(c *gin.Context) {
 		})
 		return
 	}
-
 
 	//存在
 	if notice, ok := model.QueryNotice(clubID, progress, pass); ok == true {
@@ -87,17 +86,6 @@ func GetSuccessNotice(c *gin.Context) {
 	progress, err2 := strconv.Atoi(progressStr)
 	if err2 != nil {
 		middleware.Log.Error(err2.Error())
-	}
-
-	session := sessions.Default(c)
-	userID := session.Get("user_id")
-	session.Save()
-	if userID == nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code": 400,
-			"msg":  "暂未登录",
-		})
-		return
 	}
 
 	//公告是否存在
@@ -233,9 +221,9 @@ func PublishNotice(c *gin.Context) {
 		return
 	}
 
-	ok1:=model.IsNoticeExist(clubID.(int),progress,1)
-	ok2:=model.IsNoticeExist(clubID.(int),progress,2)
-	if (ok1 && ok2)!=true{
+	ok1 := model.IsNoticeExist(clubID.(int), progress, 1)
+	ok2 := model.IsNoticeExist(clubID.(int), progress, 2)
+	if (ok1 && ok2) != true {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
 			"msg":  "公告未设置完整",

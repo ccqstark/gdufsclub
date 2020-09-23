@@ -21,6 +21,10 @@ type Login struct {
 	Code string `json:"code"`
 }
 
+type OpenID struct {
+	Openid string `json:"openid"`
+}
+
 //用户授权登录
 func AuthUser(openid string) (int, bool) {
 
@@ -44,6 +48,17 @@ func AuthUser(openid string) (int, bool) {
 
 	user.OpenID = openid
 	db.Where("open_id=?", openid).Take(&user)
+
+	return user.UserID, true
+}
+
+//用openid换取userid
+func GetUserIDByOpenid(openid string) (int, bool) {
+
+	var user User
+	if db.Where("open_id=?", openid).Take(&user).RecordNotFound() {
+		return 0, false
+	}
 
 	return user.UserID, true
 }

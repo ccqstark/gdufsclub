@@ -37,36 +37,19 @@ func ResumeTwoInOne(c *gin.Context) {
 		middleware.Log.Error(err.Error())
 	}
 
-	session := sessions.Default(c)
-	submitterID := session.Get("user_id")
-	session.Save()
-	if submitterID == nil {
+	//用openid获取用户id
+	openid := c.Query("openid")
+	var userID int
+	var ok bool
+	if userID, ok = model.GetUserIDByOpenid(openid); ok == false {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
-			"msg":  "暂未登录",
+			"msg":  "查找不到用户",
 		})
 		return
 	}
 
-	resume.SubmitterID = submitterID.(int)
-	if _, ok := model.InsertNewResume(&resume); ok == true {
-
-		//创建面试进程
-		if okk := model.CreateProcess(submitterID.(int), resume.ClubID); okk == false {
-			c.JSON(http.StatusOK, gin.H{
-				"code": 400,
-				"msg":  "无法创建面试流程",
-			})
-			return
-		}
-
-	} else {
-		c.JSON(http.StatusOK, gin.H{
-			"code": 400,
-			"msg":  "报名表提交失败，请重试",
-		})
-		return
-	}
+	resume.SubmitterID = userID
 
 	//profile图片
 	imageConf := util.Cfg.Image
@@ -112,7 +95,17 @@ func ResumeTwoInOne(c *gin.Context) {
 	}
 
 	//写入数据库
-	if ok := model.UpdateResumeProfile2(submitterID.(int),resume.ClubID,fileNameExt); ok == true {
+	resume.Image = fileNameExt
+	if _, ok := model.InsertNewResume(&resume); ok == true {
+
+		//创建面试进程
+		if okk := model.CreateProcess(userID, resume.ClubID); okk == false {
+			c.JSON(http.StatusOK, gin.H{
+				"code": 400,
+				"msg":  "无法创建面试流程",
+			})
+			return
+		}
 		c.JSON(http.StatusOK, gin.H{
 			"code": 200,
 			"msg":  "提交成功!",
@@ -124,8 +117,9 @@ func ResumeTwoInOne(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
-			"msg":  "上传失败",
+			"msg":  "报名表提交失败，请重试",
 		})
+		return
 	}
 }
 
@@ -138,25 +132,25 @@ func GetResume(c *gin.Context) {
 		middleware.Log.Error(err.Error())
 	}
 
-	session := sessions.Default(c)
-	userID := session.Get("user_id")
-	session.Save()
-	if userID == nil {
+	//用openid获取用户id
+	openid := c.Query("openid")
+	var userID int
+	var ok bool
+	if userID, ok = model.GetUserIDByOpenid(openid); ok == false {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
-			"msg":  "暂未登录",
+			"msg":  "查找不到用户",
 		})
 		return
 	}
 
-	if resume, ok := model.QueryResume(userID.(int), clubID); ok == true {
-		//设置session:获取到的resume的id
-		session.Set("resume_id", resume.ResumeID)
-		session.Set("resume_club_id", resume.ClubID)
-		session.Save()
+	if resume, ok := model.QueryResume(userID, clubID); ok == true {
+
 		c.JSON(http.StatusOK, gin.H{
 			"code": 200,
 			"resume": gin.H{
+				"resume_id": resume.ResumeID,
+				"club_id":   resume.ClubID,
 				"name":      resume.Name,
 				"sex":       resume.Sex,
 				"class":     resume.Class,
@@ -193,24 +187,23 @@ func FillNewResume(c *gin.Context) {
 		return
 	}
 
-	session := sessions.Default(c)
-	submitterID := session.Get("user_id")
-	session.Save()
-	if submitterID == nil {
+	//用openid获取用户id
+	openid := c.Query("openid")
+	var userID int
+	var ok bool
+	if userID, ok = model.GetUserIDByOpenid(openid); ok == false {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
-			"msg":  "暂未登录",
+			"msg":  "查找不到用户",
 		})
 		return
 	}
 
-	resume.SubmitterID = submitterID.(int)
+	resume.SubmitterID = userID
 	if resumeID, ok := model.InsertNewResume(&resume); ok == true {
-		session.Set("resume_id", resumeID)
-		session.Save()
 
 		//创建面试进程
-		if okk := model.CreateProcess(submitterID.(int), resume.ClubID); okk == false {
+		if okk := model.CreateProcess(userID, resume.ClubID); okk == false {
 			c.JSON(http.StatusOK, gin.H{
 				"code": 400,
 				"msg":  "无法创建面试流程",
@@ -277,19 +270,13 @@ func UploadResumeProfile(c *gin.Context) {
 	}
 
 	//写入数据库
-	session := sessions.Default(c)
-	resumeID := session.Get("resume_id")
-	session.Save()
-
-	if resumeID == nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code": 400,
-			"msg":  "找不到此报名表",
-		})
-		return
+	resumeIDStr := c.Query("resume_id")
+	resumeID, err := strconv.Atoi(resumeIDStr)
+	if err != nil {
+		middleware.Log.Error(err.Error())
 	}
 
-	if ok := model.UpdateResumeProfile(resumeID.(int), fileNameExt); ok == true {
+	if ok := model.UpdateResumeProfile(resumeID, fileNameExt); ok == true {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 200,
 			"msg":  "上传成功!",
@@ -319,31 +306,33 @@ func ModifyResume(c *gin.Context) {
 		return
 	}
 
-	session := sessions.Default(c)
-	resumeID := session.Get("resume_id")
-	userID := session.Get("user_id")
-	clubID := session.Get("resume_club_id")
-	session.Save()
-
-	if userID == nil {
+	//用openid获取用户id
+	openid := c.Query("openid")
+	var userID int
+	var ok bool
+	if userID, ok = model.GetUserIDByOpenid(openid); ok == false {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
-			"msg":  "暂未登录",
+			"msg":  "查找不到用户",
 		})
 		return
 	}
 
-	if resumeID == nil || clubID == nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code": 400,
-			"msg":  "找不到此报名表",
-		})
-		return
+	resumeIDStr := c.Query("resume_id")
+	resumeID, err := strconv.Atoi(resumeIDStr)
+	if err != nil {
+		middleware.Log.Error(err.Error())
 	}
 
-	resume.ResumeID = resumeID.(int)
-	resume.SubmitterID = userID.(int)
-	resume.ClubID = clubID.(int)
+	clubIDStr := c.Query("club_id")
+	clubID, err := strconv.Atoi(clubIDStr)
+	if err != nil {
+		middleware.Log.Error(err.Error())
+	}
+
+	resume.ResumeID = resumeID
+	resume.SubmitterID = userID
+	resume.ClubID = clubID
 	if ok := model.UpdateResumeInfo(&resume); ok == true {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 200,
