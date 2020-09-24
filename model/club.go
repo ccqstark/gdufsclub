@@ -174,6 +174,25 @@ func QueryPasser(clubID int, progress int) []int {
 	return passerID
 }
 
+//获取当前面所有人的ID
+func QueryAllPerson(clubID int, progress int) []int {
+
+	var process []Process
+	if result := db.Where("club_ID=? and progress=?", clubID, progress).
+		Select("user_id").Find(&process); result.Error != nil {
+		middleware.Log.Error(result.Error.Error())
+		return []int{}
+	}
+
+	//用于存储所有人的id
+	var personID []int
+	for _, pro := range process {
+		personID = append(personID, pro.UserID)
+	}
+
+	return personID
+}
+
 //通过ID数组批量获取用户提交的报名表上的信息
 func GainInfoByArray(clubID int, userID []int) ([]Resume, bool) {
 

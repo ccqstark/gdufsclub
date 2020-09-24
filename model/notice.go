@@ -30,6 +30,11 @@ func IsNoticeExist(clubID int, progress int, pass int) bool {
 		return false
 	}
 
+	//内容为空也算没有公告
+	if notice.Content == ""{
+		return false
+	}
+
 	return true
 }
 

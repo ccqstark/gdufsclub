@@ -11,7 +11,8 @@ import (
 
 func LoadRouter() *gin.Engine {
 
-	//gin.SetMode(gin.ReleaseMode)
+	//Release版本
+	gin.SetMode(gin.ReleaseMode)
 
 	r := gin.Default()
 
@@ -19,10 +20,6 @@ func LoadRouter() *gin.Engine {
 	redisConf := util.Cfg.Redis
 	store, _ := redis.NewStore(redisConf.IdleConnection, redisConf.Protocol, redisConf.HostPort, redisConf.Password, []byte(redisConf.Key))
 	r.Use(sessions.Sessions("mysession", store))
-
-	//store := cookie.NewStore([]byte("secret"))
-	//store := cookie.NewStore([]byte("wdnmdcao"))
-	//r.Use(sessions.Sessions("mysession", store))
 
 	//日志中间件
 	r.Use(middleware.LoggerToFile())
@@ -78,6 +75,7 @@ func LoadRouter() *gin.Engine {
 
 			//导出excel
 			v1Club.GET("/excel/:progress", controller.GetExcel)
+			v1Club.GET("/excel_all/:progress", controller.GetExcelAll)
 
 			//获得社团信息
 			v1Club.GET("/info", controller.GetOneClubInfo)
