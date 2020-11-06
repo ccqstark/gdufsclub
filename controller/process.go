@@ -57,7 +57,7 @@ func OperateOne(c *gin.Context) {
 		return
 	}
 
-	if ok := model.OperateOnePerson(clubID.(int), processUser.UserID, processUser.Pass); ok == true {
+	if ok := model.OperateOnePerson(clubID.(int), processUser.UserID, processUser.Pass, processUser.Department); ok == true {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 200,
 			"msg":  "操作成功",
@@ -94,7 +94,7 @@ func PassBatch(c *gin.Context) {
 		return
 	}
 
-	if ok := model.PassBatchInterviewee(batchUser.Interviewee, clubID.(int), batchUser.Progress); ok == true {
+	if ok := model.PassBatchInterviewee(batchUser.Interviewee, clubID.(int), batchUser.Progress, batchUser.Department); ok == true {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 200,
 			"msg":  "操作成功",

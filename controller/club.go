@@ -19,10 +19,10 @@ import (
 
 var Segmenter sego.Segmenter
 
-func init() {
-	// 载入词典
-	Segmenter.LoadDictionary("./pkg/sego/data/dictionary.txt")
-}
+//func init() {
+//	// 载入词典
+//	Segmenter.LoadDictionary("./pkg/sego/data/dictionary.txt")
+//}
 
 //社团注册二合一
 func RegisterClub(c *gin.Context) {
@@ -49,7 +49,6 @@ func RegisterClub(c *gin.Context) {
 		})
 		return
 	}
-
 
 	//logo图片
 	imageConf := util.Cfg.Image
@@ -113,7 +112,6 @@ func RegisterClub(c *gin.Context) {
 		"msg":     "申请提交成功，请耐心等待后台审核",
 		"club_id": clubID,
 	})
-
 
 	//if ok := model.UpdateLogo(clubID, fileNameExt); ok == true {
 	//
@@ -339,18 +337,19 @@ func GetUserResume(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 200,
 			"resume": gin.H{
-				"name":      resume.Name,
-				"sex":       resume.Sex,
-				"class":     resume.Class,
-				"phone":     resume.Phone,
-				"email":     resume.Email,
-				"wechat":    resume.Wechat,
-				"hobby":     resume.Hobby,
-				"advantage": resume.Advantage,
-				"self":      resume.Self,
-				"reason":    resume.Reason,
-				"image":     resume.Image,
-				"extra":     resume.Extra,
+				"department": resume.Department,
+				"name":       resume.Name,
+				"sex":        resume.Sex,
+				"class":      resume.Class,
+				"phone":      resume.Phone,
+				"email":      resume.Email,
+				"wechat":     resume.Wechat,
+				"hobby":      resume.Hobby,
+				"advantage":  resume.Advantage,
+				"self":       resume.Self,
+				"reason":     resume.Reason,
+				"image":      resume.Image,
+				"extra":      resume.Extra,
 			},
 		})
 	} else {
@@ -633,6 +632,8 @@ func ClubGetNotice(c *gin.Context) {
 		middleware.Log.Error(err.Error())
 	}
 
+	department := c.Param("department")
+
 	session := sessions.Default(c)
 	clubID := session.Get("club_id")
 	session.Save()
@@ -644,7 +645,7 @@ func ClubGetNotice(c *gin.Context) {
 		return
 	}
 
-	if notice, ok := model.ClubQueryNotice(clubID.(int), progress); ok == true {
+	if notice, ok := model.ClubQueryNotice(clubID.(int), progress, department); ok == true {
 		c.IndentedJSON(http.StatusOK, notice)
 	} else {
 		c.JSON(http.StatusOK, gin.H{
@@ -715,6 +716,7 @@ func GetOneClubInfo(c *gin.Context) {
 				"club_wechat":    club.ClubWechat,
 				"total_progress": club.TotalProgress,
 				"logo":           club.Logo,
+				"department":     club.Department,
 			},
 		})
 	} else {
@@ -739,4 +741,26 @@ func GetAllClubInfo(c *gin.Context) {
 		})
 		return
 	}
+}
+
+//获取社团的部门列表
+func GetDepartment(c *gin.Context) {
+
+	session := sessions.Default(c)
+	clubID := session.Get("club_id")
+	session.Save()
+	if clubID == nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "暂未登录",
+		})
+		return
+	}
+
+	departmentList := model.GetDepartmentList(clubID.(int))
+
+	c.JSON(http.StatusOK, gin.H{
+		"code":            200,
+		"department_list": departmentList,
+	})
 }

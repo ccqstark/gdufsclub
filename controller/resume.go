@@ -20,6 +20,7 @@ func ResumeTwoInOne(c *gin.Context) {
 
 	//二合一表信息提取
 	var resume model.Resume
+	resume.Department = c.PostForm("department")
 	resume.Name = c.PostForm("name")
 	resume.Sex = c.PostForm("sex")
 	resume.Class = c.PostForm("class")
@@ -99,7 +100,7 @@ func ResumeTwoInOne(c *gin.Context) {
 	if _, ok := model.InsertNewResume(&resume); ok == true {
 
 		//创建面试进程
-		if okk := model.CreateProcess(userID, resume.ClubID); okk == false {
+		if okk := model.CreateProcess(userID, resume.ClubID, resume.Department); okk == false {
 			c.JSON(http.StatusOK, gin.H{
 				"code": 400,
 				"msg":  "无法创建面试流程",
@@ -149,20 +150,21 @@ func GetResume(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 200,
 			"resume": gin.H{
-				"resume_id": resume.ResumeID,
-				"club_id":   resume.ClubID,
-				"name":      resume.Name,
-				"sex":       resume.Sex,
-				"class":     resume.Class,
-				"phone":     resume.Phone,
-				"email":     resume.Email,
-				"wechat":    resume.Wechat,
-				"hobby":     resume.Hobby,
-				"advantage": resume.Advantage,
-				"self":      resume.Self,
-				"reason":    resume.Reason,
-				"image":     resume.Image,
-				"extra":     resume.Extra,
+				"resume_id":  resume.ResumeID,
+				"club_id":    resume.ClubID,
+				"department": resume.Department,
+				"name":       resume.Name,
+				"sex":        resume.Sex,
+				"class":      resume.Class,
+				"phone":      resume.Phone,
+				"email":      resume.Email,
+				"wechat":     resume.Wechat,
+				"hobby":      resume.Hobby,
+				"advantage":  resume.Advantage,
+				"self":       resume.Self,
+				"reason":     resume.Reason,
+				"image":      resume.Image,
+				"extra":      resume.Extra,
 			},
 		})
 	} else {
@@ -203,7 +205,7 @@ func FillNewResume(c *gin.Context) {
 	if resumeID, ok := model.InsertNewResume(&resume); ok == true {
 
 		//创建面试进程
-		if okk := model.CreateProcess(userID, resume.ClubID); okk == false {
+		if okk := model.CreateProcess(userID, resume.ClubID, resume.Department); okk == false {
 			c.JSON(http.StatusOK, gin.H{
 				"code": 400,
 				"msg":  "无法创建面试流程",
@@ -374,12 +376,12 @@ func ClubGetResume(c *gin.Context) {
 
 	var can bool
 	if resume, ok := model.QueryResume(userID, clubID.(int)); ok == true {
-		if result, oks := model.QueryInterviewResult(userID, clubID.(int)); oks == true {
-			if !model.IsNoticeExist(clubID.(int), nowProgress, 1) {
+		if result, oks := model.QueryInterviewResult(userID, clubID.(int), resume.Department); oks == true {
+			if !model.IsNoticeExist(clubID.(int), nowProgress, 1, resume.Department) {
 				//不存在,可以修改通过状态
 				can = true
 			} else {
-				if published, okss := model.CheckIfNoticePublish(clubID.(int), nowProgress); okss == true {
+				if published, okss := model.CheckIfNoticePublish(clubID.(int), nowProgress, resume.Department); okss == true {
 					//如果已经发布，就不能再修改状态
 					can = !published
 				}
@@ -389,13 +391,14 @@ func ClubGetResume(c *gin.Context) {
 			c.JSON(http.StatusOK, gin.H{
 				"code": 200,
 				"basic": gin.H{
-					"name":   resume.Name,
-					"sex":    resume.Sex,
-					"class":  resume.Class,
-					"phone":  resume.Phone,
-					"wechat": resume.Wechat,
-					"image":  resume.Image,
-					"email":  resume.Email,
+					"name":       resume.Name,
+					"sex":        resume.Sex,
+					"class":      resume.Class,
+					"phone":      resume.Phone,
+					"wechat":     resume.Wechat,
+					"image":      resume.Image,
+					"email":      resume.Email,
+					"department": resume.Department,
 				},
 				"other": gin.H{
 					"reason":    resume.Reason,

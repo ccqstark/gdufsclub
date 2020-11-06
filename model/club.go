@@ -17,17 +17,19 @@ type Club struct {
 	TotalProgress int    `gorm:"column:total_progress" json:"total_progress"`
 	Logo          string `gorm:"column:logo"`
 	Pass          int    `gorm:"column:pass"`
+	Department    string `gorm:"column:department"`
 }
 
 type UserList struct {
-	UserID int    `gorm:"column:submitter_id"`
-	ClubID int    `gorm:"column:club_id`
-	Name   string `gorm:"column:name"`
-	Sex    string `gorm:"column:sex"`
-	Class  string `gorm:"column:class"`
-	Phone  string `gorm:"column:phone"`
-	Wechat string `gorm:"column:wechat"`
-	Result int    `gorm:"column:result"`
+	UserID     int    `gorm:"column:submitter_id"`
+	ClubID     int    `gorm:"column:club_id`
+	Name       string `gorm:"column:name"`
+	Sex        string `gorm:"column:sex"`
+	Class      string `gorm:"column:class"`
+	Phone      string `gorm:"column:phone"`
+	Wechat     string `gorm:"column:wechat"`
+	Result     int    `gorm:"column:result"`
+	Department string `gorm:"column:department`
 }
 
 type ClubAccount struct {
@@ -41,6 +43,7 @@ type ClubModInfo struct {
 	ClubWechat    string `json:"club_wechat"`
 	ClubPhone     string `json:"club_phone"`
 	TotalProgress int    `json:"total_progress"`
+	Department    string `gorm:"column:department"`
 }
 
 //插入新的社团
@@ -174,11 +177,11 @@ func QueryPasser(clubID int, progress int) []int {
 	return passerID
 }
 
-//获取当前面所有人的ID
+//获取经历过当前面所有人的ID
 func QueryAllPerson(clubID int, progress int) []int {
 
 	var process []Process
-	if result := db.Where("club_ID=? and progress=?", clubID, progress).
+	if result := db.Where("club_ID=? and progress>=?", clubID, progress).
 		Select("user_id").Find(&process); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return []int{}
@@ -238,6 +241,7 @@ func UpdateClubInfo(info ClubModInfo, clubID int) bool {
 			"club_email":     info.ClubEmail,
 			"club_wechat":    info.ClubWechat,
 			"total_progress": info.TotalProgress,
+			"department":     info.Department,
 		}); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return false
@@ -253,19 +257,20 @@ func UpdateClubInfo(info ClubModInfo, clubID int) bool {
 	return true
 }
 
-//生成这一轮用户通过者用户基本信息列表
+//生成这一轮的用户的基本信息列表
 func QueryUserListBrief(clubID int, progress int) ([]UserList, bool) {
 
 	//基本信息: 姓名，性别，班级，手机号，微信号
 	var userList []UserList
 	var userIDArr []int
 	type Parr struct {
-		ProcessID int
-		UserID    int
-		Result    int
+		ProcessID  int
+		UserID     int
+		Result     int
+		Department string
 	}
 	//先获取对应的用户的id
-	sql := "SELECT process_id,user_id,result FROM process WHERE club_id=? and progress=?"
+	sql := "SELECT process_id,user_id,result,department FROM process WHERE club_id=? and progress=?"
 	var parr []Parr
 	if result := db.Raw(sql, clubID, progress).Scan(&parr); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
@@ -284,11 +289,12 @@ func QueryUserListBrief(clubID int, progress int) ([]UserList, bool) {
 		return []UserList{}, false
 	}
 
-	//补充面试结果信息
+	//补充面试结果信息,部门
 	for i1 := range userList {
 		for i2 := range parr {
 			if userList[i1].UserID == parr[i2].UserID {
 				userList[i1].Result = parr[i2].Result
+				userList[i1].Department = parr[i2].Department
 			}
 		}
 	}

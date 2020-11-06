@@ -17,7 +17,7 @@ func init() {
 	//加载全局配置
 	databaseConf := util.Cfg.Database
 	//dsn配置
-	username := databaseConf.Username //账号
+	//username := databaseConf.Username //账号
 	password := databaseConf.Password //密码
 	host := databaseConf.Host         //数据库地址
 	port := databaseConf.Port         //数据库端口
@@ -26,13 +26,15 @@ func init() {
 	password = "Fuckingsafe" + password + "410"
 
 	//拼接dsn参数
-	dsn := fmt.Sprintf("%scrud:%s!!@tcp(%s:%d)/%sdb?charset=utf8&parseTime=True&loc=Local&timeout=%s", username, password+"!", host, port, dbname, timeout)
+	//dsn := fmt.Sprintf("%scrud:%s!!@tcp(%s:%d)/%sdb?charset=utf8&parseTime=True&loc=Local&timeout=%s", username, password+"!", host, port, dbname, timeout)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%sdb?charset=utf8&parseTime=True&loc=Local&timeout=%s", "root", "root", host, port, dbname, timeout)
 
 	var err error
 	//连接MYSQL, 获得DB类型实例，用于后面的数据库读写操作。
 	_db, err = gorm.Open("mysql", dsn)
 	if err != nil {
 		middleware.Log.Error("连接数据库失败, error=" + err.Error())
+		fmt.Println("数据库连接失败", err)
 	}
 
 	//取消表名复数

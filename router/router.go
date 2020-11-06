@@ -12,7 +12,8 @@ import (
 func LoadRouter() *gin.Engine {
 
 	//Release版本
-	gin.SetMode(gin.ReleaseMode)
+	//gin.SetMode(gin.ReleaseMode)
+	gin.SetMode(gin.DebugMode)
 
 	r := gin.Default()
 
@@ -81,6 +82,9 @@ func LoadRouter() *gin.Engine {
 			v1Club.GET("/info", controller.GetOneClubInfo)
 			//修改社团信息
 			v1Club.PUT("/info", controller.ModifyClubInfo)
+
+			//获取社团的部门列表
+			v1Club.GET("/department_list", controller.GetDepartment)
 		}
 
 		//template

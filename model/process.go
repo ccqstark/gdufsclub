@@ -10,6 +10,7 @@ type Process struct {
 	ProcessID     int    `gorm:"primary_key"`
 	UserID        int    `gorm:"user_id"`
 	ClubID        int    `gorm:"club_id"`
+	Department    string `gorm:"department"`
 	Logo          string `gorm:"logo" json:"logo"`
 	ClubName      string `gorm:"club_name" json:"club_name"`
 	TotalProgress int    `gorm:"total_progress" json:"total_progress"`
@@ -18,13 +19,15 @@ type Process struct {
 }
 
 type ProcessUser struct {
-	UserID int `json:"user_id"`
-	Pass   int `json:"pass"`
+	UserID     int    `json:"user_id"`
+	Pass       int    `json:"pass"`
+	Department string `json:"department"`
 }
 
 type BatchUser struct {
 	Interviewee []string `json:"interviewee"`
 	Progress    int      `json:"progress"`
+	Department  string   `json:"department"`
 }
 
 //获取用户所有的面试进程
@@ -39,8 +42,9 @@ func QueryProcess(userID int) ([]Process, bool) {
 	//未发布公告不能看到结果
 	for i := range process {
 		clubIDTemp := process[i].ClubID
+		department := process[i].Department
 		progressTemp := process[i].Progress
-		published, ok := CheckIfNoticePublish(clubIDTemp, progressTemp)
+		published, ok := CheckIfNoticePublish(clubIDTemp, progressTemp, department)
 		if ok == true {
 			if published == false {
 				process[i].Result = 0
@@ -55,7 +59,7 @@ func QueryProcess(userID int) ([]Process, bool) {
 }
 
 //提交报名表时就创建面试进程
-func CreateProcess(userID int, clubID int) bool {
+func CreateProcess(userID int, clubID int, department string) bool {
 
 	var process Process
 	if club, ok := QueryClubInfo(clubID); ok == true {
@@ -70,6 +74,7 @@ func CreateProcess(userID int, clubID int) bool {
 	process.ClubID = clubID
 	process.Progress = 1
 	process.Result = 0
+	process.Department = department
 
 	if result := db.Create(&process); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
@@ -80,10 +85,10 @@ func CreateProcess(userID int, clubID int) bool {
 }
 
 //查询面试结果
-func QueryInterviewResult(userID int, clubID int) (int, bool) {
+func QueryInterviewResult(userID int, clubID int, department string) (int, bool) {
 
 	var process Process
-	if result := db.Where("user_id = ? and club_id=?", userID, clubID).Take(&process); result.Error != nil {
+	if result := db.Where("user_id = ? and club_id=? and department=?", userID, clubID, department).Take(&process); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return 0, false
 	}
@@ -92,11 +97,10 @@ func QueryInterviewResult(userID int, clubID int) (int, bool) {
 }
 
 //对一人的面试结果进行操作
-func OperateOnePerson(clubID int, userID int, pass int) bool {
+func OperateOnePerson(clubID int, userID int, pass int, department string) bool {
 
 	var process Process
-	if result := db.Model(&process).Where("club_id=? and user_id=?", clubID, userID).Update("result", pass);
-		result.Error != nil {
+	if result := db.Model(&process).Where("club_id=? and user_id=? and department=?", clubID, userID, department).Update("result", pass); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return false
 	}
@@ -105,10 +109,10 @@ func OperateOnePerson(clubID int, userID int, pass int) bool {
 }
 
 //批量通过面试者
-func PassBatchInterviewee(batch []string, clubID int, progress int) bool {
+func PassBatchInterviewee(batch []string, clubID int, progress int, department string) bool {
 
 	batchStr := strings.Join(batch, ",")
-	sql := fmt.Sprintf("UPDATE process SET result=1 WHERE club_id=%d and progress=%d and user_id IN (%s);", clubID, progress, batchStr)
+	sql := fmt.Sprintf("UPDATE process SET result=1 WHERE club_id=%d and department=%s and progress=%d and user_id IN (%s);", clubID, department, progress, batchStr)
 
 	if result := db.Exec(sql); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())

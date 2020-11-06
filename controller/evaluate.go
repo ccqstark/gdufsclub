@@ -24,6 +24,8 @@ func GetAEvaluate(c *gin.Context) {
 		middleware.Log.Error(err.Error())
 	}
 
+	department := c.Query("department")
+
 	session := sessions.Default(c)
 	clubID := session.Get("club_id")
 	session.Save()
@@ -36,7 +38,7 @@ func GetAEvaluate(c *gin.Context) {
 	}
 
 	//查询评论
-	if evaluate, ok := model.QueryEvaluate(clubID.(int), userID, progress); ok == true {
+	if evaluate, ok := model.QueryEvaluate(clubID.(int), userID, progress, department); ok == true {
 		session.Set("evaluate_id", evaluate.EvaluateID)
 		session.Save()
 

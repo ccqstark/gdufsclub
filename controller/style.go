@@ -39,21 +39,22 @@ func GetStyle(c *gin.Context) {
 		session.Set("club_name", style.ClubName)
 		session.Save()
 		c.JSON(http.StatusOK, gin.H{
-			"code": 200,
+			"code":      200,
 			"club_name": style.ClubName,
 			"template": gin.H{
-				"style_name":      style.StyleName,
-				"style_sex":       style.StyleSex,
-				"style_class":     style.StyleClass,
-				"style_phone":     style.StylePhone,
-				"style_email":     style.StyleEmail,
-				"style_wechat":    style.StyleWechat,
-				"style_image":     style.StyleImage,
-				"style_hobby":     style.StyleHobby,
-				"style_advantage": style.StyleAdvantage,
-				"style_self":      style.StyleSelf,
-				"style_reason":    style.StyleReason,
-				"style_extra":     style.StyleExtra,
+				"style_department": style.StyleDepartment,
+				"style_name":       style.StyleName,
+				"style_sex":        style.StyleSex,
+				"style_class":      style.StyleClass,
+				"style_phone":      style.StylePhone,
+				"style_email":      style.StyleEmail,
+				"style_wechat":     style.StyleWechat,
+				"style_image":      style.StyleImage,
+				"style_hobby":      style.StyleHobby,
+				"style_advantage":  style.StyleAdvantage,
+				"style_self":       style.StyleSelf,
+				"style_reason":     style.StyleReason,
+				"style_extra":      style.StyleExtra,
 			},
 		})
 	} else {
@@ -84,22 +85,25 @@ func GetUserStyle(c *gin.Context) {
 	}
 	//存在
 	if style, ok := model.QueryStyle(clubID); ok == true {
+		departmentList := model.GetDepartmentList(clubID)
 		c.JSON(http.StatusOK, gin.H{
 			"code": 200,
 			"template": gin.H{
-				"club_name":       style.ClubName,
-				"style_name":      style.StyleName,
-				"style_sex":       style.StyleSex,
-				"style_class":     style.StyleClass,
-				"style_phone":     style.StylePhone,
-				"style_email":     style.StyleEmail,
-				"style_wechat":    style.StyleWechat,
-				"style_image":     style.StyleImage,
-				"style_hobby":     style.StyleHobby,
-				"style_advantage": style.StyleAdvantage,
-				"style_self":      style.StyleSelf,
-				"style_reason":    style.StyleReason,
-				"style_extra":     style.StyleExtra,
+				"club_name":        style.ClubName,
+				"style_department": style.StyleDepartment,
+				"style_name":       style.StyleName,
+				"style_sex":        style.StyleSex,
+				"style_class":      style.StyleClass,
+				"style_phone":      style.StylePhone,
+				"style_email":      style.StyleEmail,
+				"style_wechat":     style.StyleWechat,
+				"style_image":      style.StyleImage,
+				"style_hobby":      style.StyleHobby,
+				"style_advantage":  style.StyleAdvantage,
+				"style_self":       style.StyleSelf,
+				"style_reason":     style.StyleReason,
+				"style_extra":      style.StyleExtra,
+				"department_list":  departmentList,
 			},
 		})
 	} else {

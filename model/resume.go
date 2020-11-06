@@ -9,6 +9,7 @@ type Resume struct {
 	ResumeID    int    `gorm:"primary_key"`
 	SubmitterID int    `gorm:"column:submitter_id"`
 	ClubID      int    `gorm:"column:club_id" json:"club_id"`
+	Department  string `gorm:"column:department" json:"department"`
 	Name        string `gorm:"column:name" json:"name"`
 	Sex         string `gorm:"column:sex" json:"sex"`
 	Class       string `gorm:"column:class" json:"class"`

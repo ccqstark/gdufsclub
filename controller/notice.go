@@ -18,6 +18,8 @@ func GetUserNotice(c *gin.Context) {
 		middleware.Log.Error(err1.Error())
 	}
 
+	department := c.Query("department")
+
 	progressStr := c.Query("progress")
 	progress, err2 := strconv.Atoi(progressStr)
 	if err2 != nil {
@@ -38,7 +40,7 @@ func GetUserNotice(c *gin.Context) {
 
 	//查询面试结果
 	var pass int
-	if pass, ok = model.QueryInterviewResult(userID, clubID); ok == false {
+	if pass, ok = model.QueryInterviewResult(userID, clubID, department); ok == false {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
 			"msg":  "查询不到面试结果",
@@ -47,7 +49,7 @@ func GetUserNotice(c *gin.Context) {
 	}
 
 	//公告是否存在
-	if !model.IsNoticeExist(clubID, progress, pass) {
+	if !model.IsNoticeExist(clubID, progress, pass, department) {
 		//不存在
 		c.JSON(http.StatusOK, gin.H{
 			"code": 401,
@@ -57,7 +59,7 @@ func GetUserNotice(c *gin.Context) {
 	}
 
 	//存在
-	if notice, ok := model.QueryNotice(clubID, progress, pass); ok == true {
+	if notice, ok := model.QueryNotice(clubID, progress, pass, department); ok == true {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 200,
 			"notice": gin.H{
@@ -88,8 +90,10 @@ func GetSuccessNotice(c *gin.Context) {
 		middleware.Log.Error(err2.Error())
 	}
 
+	department := c.Query("department")
+
 	//公告是否存在
-	if !model.IsNoticeExist(clubID, progress, 1) {
+	if !model.IsNoticeExist(clubID, progress, 1, department) {
 		//不存在
 		c.JSON(http.StatusOK, gin.H{
 			"code": 401,
@@ -99,7 +103,7 @@ func GetSuccessNotice(c *gin.Context) {
 	}
 
 	//存在
-	if notice, ok := model.QueryNotice(clubID, progress, 1); ok == true {
+	if notice, ok := model.QueryNotice(clubID, progress, 1, department); ok == true {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 200,
 			"notice": gin.H{
@@ -150,7 +154,7 @@ func PostNewNotice(c *gin.Context) {
 		return
 	}
 
-	if ok := model.InsertNewNotice(&twoNotice, clubID.(int), clubName); ok == true {
+	if ok := model.InsertNewNotice(&twoNotice, clubID.(int), clubName, twoNotice.Department); ok == true {
 
 		c.JSON(http.StatusOK, gin.H{
 			"code": 200,
@@ -210,6 +214,8 @@ func PublishNotice(c *gin.Context) {
 		middleware.Log.Error(err.Error())
 	}
 
+	department := c.Param("department")
+
 	session := sessions.Default(c)
 	clubID := session.Get("club_id")
 	session.Save()
@@ -221,8 +227,8 @@ func PublishNotice(c *gin.Context) {
 		return
 	}
 
-	ok1 := model.IsNoticeExist(clubID.(int), progress, 1)
-	ok2 := model.IsNoticeExist(clubID.(int), progress, 2)
+	ok1 := model.IsNoticeExist(clubID.(int), progress, 1, department)
+	ok2 := model.IsNoticeExist(clubID.(int), progress, 2, department)
 	if (ok1 && ok2) != true {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
@@ -231,7 +237,7 @@ func PublishNotice(c *gin.Context) {
 		return
 	}
 
-	if ok := model.MakeNoticePublished(clubID.(int), progress); ok == true {
+	if ok := model.MakeNoticePublished(clubID.(int), progress, department); ok == true {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 200,
 			"msg":  "操作成功",

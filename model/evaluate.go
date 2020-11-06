@@ -6,15 +6,16 @@ type Evaluate struct {
 	EvaluateID int    `gorm:"primary_key"`
 	UserID     int    `gorm:"column:user_id" json:"user_id"`
 	ClubID     int    `gorm:"column:club_id"`
+	Department string `gorm:"column:department"`
 	Progress   int    `gorm:"column:progress" json:"progress"`
 	Content    string `gorm:"column:content" json:"content"`
 }
 
 //获取评价
-func QueryEvaluate(clubID int, userID int, progress int) (Evaluate, bool) {
+func QueryEvaluate(clubID int, userID int, progress int, department string) (Evaluate, bool) {
 
 	var evaluate Evaluate
-	if result := db.Where("club_id=? and user_id=? and progress=?", clubID, userID, progress).Take(&evaluate); result.Error != nil {
+	if result := db.Where("club_id=? and user_id=? and progress=? and department=?", clubID, userID, progress, department).Take(&evaluate); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return Evaluate{}, false
 	}
