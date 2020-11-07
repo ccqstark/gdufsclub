@@ -420,6 +420,21 @@ func GetExcel(c *gin.Context) {
 	wechatCell := row.AddCell()
 	wechatCell.Value = "微信号"
 
+	StudentNumberCell := row.AddCell()
+	StudentNumberCell.Value = "学号"
+
+	PoliticsStatusCell := row.AddCell()
+	PoliticsStatusCell.Value = "政治面貌"
+
+	CampusCell := row.AddCell()
+	CampusCell.Value = "所在校区"
+
+	TakeOfficeCell := row.AddCell()
+	TakeOfficeCell.Value = "任职"
+
+	RemarksCell := row.AddCell()
+	RemarksCell.Value = "备注"
+
 	//载入data
 	for _, info := range infoArr {
 		row := sheet.AddRow()
@@ -438,6 +453,23 @@ func GetExcel(c *gin.Context) {
 
 		wechatCell := row.AddCell()
 		wechatCell.Value = info.Wechat
+
+		newField := model.ParseField(info.Extra)
+
+		StudentNumberCell := row.AddCell()
+		StudentNumberCell.Value = newField.StudentNumber
+
+		PoliticsStatusCell := row.AddCell()
+		PoliticsStatusCell.Value = newField.PoliticsStatus
+
+		CampusCell := row.AddCell()
+		CampusCell.Value = newField.Campus
+
+		TakeOfficeCell := row.AddCell()
+		TakeOfficeCell.Value = newField.TakeOffice
+
+		RemarksCell := row.AddCell()
+		RemarksCell.Value = newField.Remarks
 	}
 
 	fileName := util.Md5SaltCrypt(fmt.Sprintf("%s%s", "excelqlg", time.Now().String()))
@@ -530,6 +562,21 @@ func GetExcelAll(c *gin.Context) {
 	wechatCell := row.AddCell()
 	wechatCell.Value = "微信号"
 
+	StudentNumberCell := row.AddCell()
+	StudentNumberCell.Value = "学号"
+
+	PoliticsStatusCell := row.AddCell()
+	PoliticsStatusCell.Value = "政治面貌"
+
+	CampusCell := row.AddCell()
+	CampusCell.Value = "所在校区"
+
+	TakeOfficeCell := row.AddCell()
+	TakeOfficeCell.Value = "任职"
+
+	RemarksCell := row.AddCell()
+	RemarksCell.Value = "备注"
+
 	//载入data
 	for _, info := range infoArr {
 		row := sheet.AddRow()
@@ -548,6 +595,23 @@ func GetExcelAll(c *gin.Context) {
 
 		wechatCell := row.AddCell()
 		wechatCell.Value = info.Wechat
+
+		newField := model.ParseField(info.Extra)
+
+		StudentNumberCell := row.AddCell()
+		StudentNumberCell.Value = newField.StudentNumber
+
+		PoliticsStatusCell := row.AddCell()
+		PoliticsStatusCell.Value = newField.PoliticsStatus
+
+		CampusCell := row.AddCell()
+		CampusCell.Value = newField.Campus
+
+		TakeOfficeCell := row.AddCell()
+		TakeOfficeCell.Value = newField.TakeOffice
+
+		RemarksCell := row.AddCell()
+		RemarksCell.Value = newField.Remarks
 	}
 
 	fileName := util.Md5SaltCrypt(fmt.Sprintf("%s%s", "excelqlg", time.Now().String()))

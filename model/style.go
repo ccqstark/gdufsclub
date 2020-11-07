@@ -7,8 +7,10 @@ type Style struct {
 	ClubID          int    `gorm:"column:club_id" json:"club_id"`
 	ClubName        string `gorm:"column:club_name" json:"club_name"`
 	StyleDepartment uint8  `gorm:"column:style_department" json:"style_department"`
+	StyleVolunteer  uint8  `gorm:"column:style_volunteer" json:"style_volunteer"`
 	StyleName       uint8  `gorm:"column:style_name" json:"style_name"`
 	StyleSex        uint8  `gorm:"column:style_sex" json:"style_sex"`
+	StyleCollege    uint8  `gorm:"column:style_college" json:"style_college"`
 	StyleClass      uint8  `gorm:"column:style_class" json:"club_class"`
 	StylePhone      uint8  `gorm:"column:style_phone" json:"style_phone"`
 	StyleEmail      uint   `gorm:"column:style_email" json:"style_email"`

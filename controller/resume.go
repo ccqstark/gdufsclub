@@ -21,8 +21,10 @@ func ResumeTwoInOne(c *gin.Context) {
 	//二合一表信息提取
 	var resume model.Resume
 	resume.Department = c.PostForm("department")
+	resume.Volunteer = c.PostForm("volunteer")
 	resume.Name = c.PostForm("name")
 	resume.Sex = c.PostForm("sex")
+	resume.College = c.PostForm("college")
 	resume.Class = c.PostForm("class")
 	resume.Phone = c.PostForm("phone")
 	resume.Email = c.PostForm("email")
@@ -153,8 +155,10 @@ func GetResume(c *gin.Context) {
 				"resume_id":  resume.ResumeID,
 				"club_id":    resume.ClubID,
 				"department": resume.Department,
+				"volunteer":  resume.Volunteer,
 				"name":       resume.Name,
 				"sex":        resume.Sex,
+				"college":    resume.College,
 				"class":      resume.Class,
 				"phone":      resume.Phone,
 				"email":      resume.Email,
@@ -393,12 +397,14 @@ func ClubGetResume(c *gin.Context) {
 				"basic": gin.H{
 					"name":       resume.Name,
 					"sex":        resume.Sex,
+					"college":    resume.College,
 					"class":      resume.Class,
 					"phone":      resume.Phone,
 					"wechat":     resume.Wechat,
 					"image":      resume.Image,
 					"email":      resume.Email,
 					"department": resume.Department,
+					"volunteer":  resume.Volunteer,
 				},
 				"other": gin.H{
 					"reason":    resume.Reason,

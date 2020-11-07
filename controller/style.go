@@ -43,8 +43,10 @@ func GetStyle(c *gin.Context) {
 			"club_name": style.ClubName,
 			"template": gin.H{
 				"style_department": style.StyleDepartment,
+				"style_volunteer":  style.StyleVolunteer,
 				"style_name":       style.StyleName,
 				"style_sex":        style.StyleSex,
+				"style_college":    style.StyleCollege,
 				"style_class":      style.StyleClass,
 				"style_phone":      style.StylePhone,
 				"style_email":      style.StyleEmail,
@@ -91,8 +93,10 @@ func GetUserStyle(c *gin.Context) {
 			"template": gin.H{
 				"club_name":        style.ClubName,
 				"style_department": style.StyleDepartment,
+				"style_volunteer":  style.StyleVolunteer,
 				"style_name":       style.StyleName,
 				"style_sex":        style.StyleSex,
+				"style_college":    style.StyleCollege,
 				"style_class":      style.StyleClass,
 				"style_phone":      style.StylePhone,
 				"style_email":      style.StyleEmail,

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/ccqstark/gdufsclub/middleware"
 	"github.com/ccqstark/gdufsclub/util"
+	"strings"
 )
 
 type Club struct {
@@ -44,6 +45,14 @@ type ClubModInfo struct {
 	ClubPhone     string `json:"club_phone"`
 	TotalProgress int    `json:"total_progress"`
 	Department    string `gorm:"column:department"`
+}
+
+type NewField struct {
+	StudentNumber  string
+	PoliticsStatus string
+	Campus         string
+	TakeOffice     string
+	Remarks        string
 }
 
 //插入新的社团
@@ -125,7 +134,7 @@ func QueryClubInfo(id int) (Club, bool) {
 func QueryAllClubInfo() ([]Club, bool) {
 
 	var club []Club
-	if result := db.Select("club_id,club_name,club_email,club_phone,club_wechat,total_progress,logo").
+	if result := db.Select("club_id,club_name,club_email,club_phone,club_wechat,total_progress,logo,department").
 		Where("pass=?", 1).Find(&club); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return []Club{}, false
@@ -300,4 +309,32 @@ func QueryUserListBrief(clubID int, progress int) ([]UserList, bool) {
 	}
 
 	return userList, true
+}
+
+//政治面貌,所在校区,任职,备注
+func ParseField(str string) NewField {
+
+	strArr := strings.Split(str, "@@")
+
+	keyArr := strings.Split(strArr[0], ",")
+	valueArr := strings.Split(strArr[1], "**")
+
+	newField := NewField{}
+
+	for i := range keyArr {
+		switch keyArr[i] {
+		case "学号":
+			newField.StudentNumber = valueArr[i]
+		case "政治面貌":
+			newField.PoliticsStatus = valueArr[i]
+		case "所在校区":
+			newField.Campus = valueArr[i]
+		case "任职":
+			newField.TakeOffice = valueArr[i]
+		case "备注":
+			newField.Remarks = valueArr[i]
+		}
+	}
+
+	return newField
 }
