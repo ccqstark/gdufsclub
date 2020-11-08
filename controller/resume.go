@@ -8,6 +8,7 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"net/url"
 	"os"
 	"path"
 	"strconv"
@@ -135,6 +136,9 @@ func GetResume(c *gin.Context) {
 		middleware.Log.Error(err.Error())
 	}
 
+	department := c.Query("department")
+	department, err = url.QueryUnescape(department)
+
 	//用openid获取用户id
 	openid := c.Query("openid")
 	var userID int
@@ -147,7 +151,7 @@ func GetResume(c *gin.Context) {
 		return
 	}
 
-	if resume, ok := model.QueryResume(userID, clubID); ok == true {
+	if resume, ok := model.QueryResume(userID, clubID, department); ok == true {
 
 		c.JSON(http.StatusOK, gin.H{
 			"code": 200,
@@ -367,6 +371,9 @@ func ClubGetResume(c *gin.Context) {
 		middleware.Log.Error(err.Error())
 	}
 
+	department := c.Query("department")
+	department, err = url.QueryUnescape(department)
+
 	session := sessions.Default(c)
 	clubID := session.Get("club_id")
 	session.Save()
@@ -379,7 +386,7 @@ func ClubGetResume(c *gin.Context) {
 	}
 
 	var can bool
-	if resume, ok := model.QueryResume(userID, clubID.(int)); ok == true {
+	if resume, ok := model.QueryResume(userID, clubID.(int), department); ok == true {
 		if result, oks := model.QueryInterviewResult(userID, clubID.(int), resume.Department); oks == true {
 			if !model.IsNoticeExist(clubID.(int), nowProgress, 1, resume.Department) {
 				//不存在,可以修改通过状态

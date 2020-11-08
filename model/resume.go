@@ -65,10 +65,10 @@ func UpdateResumeProfile2(userID int, clubID int, path string) bool {
 }
 
 //查看自己提交的报名简历
-func QueryResume(userID int, clubID int) (Resume, bool) {
+func QueryResume(userID int, clubID int, department string) (Resume, bool) {
 
 	var resume Resume
-	if result := db.Where("submitter_id=? and club_id=?", userID, clubID).Take(&resume); result.Error != nil {
+	if result := db.Where("submitter_id=? and club_id=? and department=?", userID, clubID, department).Take(&resume); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return Resume{}, false
 	}

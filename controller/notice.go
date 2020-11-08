@@ -6,6 +6,7 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"net/url"
 	"strconv"
 )
 
@@ -19,6 +20,7 @@ func GetUserNotice(c *gin.Context) {
 	}
 
 	department := c.Query("department")
+	department, err1 = url.QueryUnescape(department)
 
 	progressStr := c.Query("progress")
 	progress, err2 := strconv.Atoi(progressStr)
@@ -91,6 +93,7 @@ func GetSuccessNotice(c *gin.Context) {
 	}
 
 	department := c.Query("department")
+	department, err1 = url.QueryUnescape(department)
 
 	//公告是否存在
 	if !model.IsNoticeExist(clubID, progress, 1, department) {
@@ -214,7 +217,8 @@ func PublishNotice(c *gin.Context) {
 		middleware.Log.Error(err.Error())
 	}
 
-	department := c.Param("department")
+	department := c.Query("department")
+	department, err = url.QueryUnescape(department)
 
 	session := sessions.Default(c)
 	clubID := session.Get("club_id")

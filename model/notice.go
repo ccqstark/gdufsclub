@@ -121,21 +121,21 @@ func UpdateNotice(twoNotice *TwoNotice, clubID int) bool {
 //公告统一发布
 func MakeNoticePublished(clubID int, progress int, department string) bool {
 
-	sql1 := fmt.Sprintf("UPDATE notice SET publish=1 WHERE club_id=%d and progress=%d and department=%s;", clubID, progress, department)
+	sql1 := fmt.Sprintf("UPDATE notice SET publish=1 WHERE club_id=%d and progress=%d and department='%s';", clubID, progress, department)
 	if result := db.Exec(sql1); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return false
 	}
 
 	//通过的人面试轮数+1
-	sql2 := fmt.Sprintf("UPDATE process SET progress=%d, result=0 WHERE club_id=%d and progress=%d and result=1 and department=%s;", progress+1, clubID, progress, department)
+	sql2 := fmt.Sprintf("UPDATE process SET progress=%d, result=0 WHERE club_id=%d and progress=%d and result=1 and department='%s';", progress+1, clubID, progress, department)
 	if result := db.Exec(sql2); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return false
 	}
 
 	//没审核的人直接算不过
-	sql3 := fmt.Sprintf("UPDATE process SET result=2 WHERE club_id=%d and progress=%d and result=0 and department=%s;", clubID, progress, department)
+	sql3 := fmt.Sprintf("UPDATE process SET result=2 WHERE club_id=%d and progress=%d and result=0 and department='%s';", clubID, progress, department)
 	if result := db.Exec(sql3); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return false

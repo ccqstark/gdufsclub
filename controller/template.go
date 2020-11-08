@@ -21,6 +21,7 @@ func TplTwoInOne(c *gin.Context) {
 	var template model.Template
 	template.TemplateName = c.PostForm("template_name")
 	template.TemplateSex = c.PostForm("template_sex")
+	template.TemplateCollege = c.PostForm("template_college")
 	template.TemplateClass = c.PostForm("template_class")
 	template.TemplatePhone = c.PostForm("template_phone")
 	template.TemplateEmail = c.PostForm("template_email")
@@ -139,6 +140,7 @@ func GetTemplate(c *gin.Context) {
 			"template": gin.H{
 				"template_id": tpl.TemplateID,
 				"name":        tpl.TemplateName,
+				"college":     tpl.TemplateCollege,
 				"class":       tpl.TemplateClass,
 				"sex":         tpl.TemplateSex,
 				"wechat":      tpl.TemplateWechat,

@@ -8,6 +8,7 @@ type Template struct {
 	TemplateID        int    `gorm:"primary_key"`
 	UserID            int    `gorm:"column:user_id"`
 	TemplateName      string `gorm:"column:template_name" json:"template_name"`
+	TemplateCollege   string `gorm:"column:template_college" json:"template_college"`
 	TemplateClass     string `gorm:"column:template_class" json:"template_class"`
 	TemplateSex       string `gorm:"column:template_sex" json:"template_sex"`
 	TemplateWechat    string `gorm:"column:template_wechat" json:"template_wechat"`
@@ -72,7 +73,7 @@ func UpdateTplProfile(id int, path string) bool {
 	return true
 }
 
-//获取模板信息
+//更新模板信息
 func UpdateTemplateInfo(tpl *Template) bool {
 
 	if result := db.Save(&tpl); result.Error != nil {

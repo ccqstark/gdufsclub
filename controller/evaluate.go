@@ -6,6 +6,7 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"net/url"
 	"strconv"
 )
 
@@ -25,6 +26,7 @@ func GetAEvaluate(c *gin.Context) {
 	}
 
 	department := c.Query("department")
+	department, err = url.QueryUnescape(department)
 
 	session := sessions.Default(c)
 	clubID := session.Get("club_id")

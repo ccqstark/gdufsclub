@@ -292,7 +292,7 @@ func QueryUserListBrief(clubID int, progress int) ([]UserList, bool) {
 	}
 
 	//用用户id查询信息
-	sql = "SELECT submitter_id, club_id, name, sex, class, phone, wechat FROM resume WHERE club_id=? and submitter_id IN (?)"
+	sql = "SELECT submitter_id, club_id, name, sex, class, phone, wechat, department FROM resume WHERE club_id=? and submitter_id IN (?)"
 	if result := db.Raw(sql, clubID, userIDArr).Scan(&userList); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return []UserList{}, false
@@ -301,9 +301,8 @@ func QueryUserListBrief(clubID int, progress int) ([]UserList, bool) {
 	//补充面试结果信息,部门
 	for i1 := range userList {
 		for i2 := range parr {
-			if userList[i1].UserID == parr[i2].UserID {
+			if userList[i1].UserID == parr[i2].UserID && userList[i1].Department == parr[i2].Department {
 				userList[i1].Result = parr[i2].Result
-				userList[i1].Department = parr[i2].Department
 			}
 		}
 	}

@@ -24,14 +24,18 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eb5e9959-3a0d-4446-a66b-62daa4faaf44" name="Default Changelist" comment="for new system finish 1-3">
+    <list default="true" id="eb5e9959-3a0d-4446-a66b-62daa4faaf44" name="Default Changelist" comment="for new system finish 4-6">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/controller/club.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/club.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/evaluate.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/evaluate.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/notice.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/notice.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/controller/resume.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/resume.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/style.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/style.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/template.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/template.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/club.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/club.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/notice.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/notice.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/process.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/process.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/resume.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/resume.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/style.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/style.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/template.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/template.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -152,7 +156,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="for new system finish 1-3" />
-    <option name="LAST_COMMIT_MESSAGE" value="for new system finish 1-3" />
+    <MESSAGE value="for new system finish 4-6" />
+    <option name="LAST_COMMIT_MESSAGE" value="for new system finish 4-6" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
@@ -178,46 +183,47 @@
       <screen x="0" y="0" width="1536" height="834" />
     </state>
     <state x="583" y="321" key="GrepConsoleSound/0.0.1536.834@0.0.1536.834" timestamp="1598955165459" />
-    <state width="1877" height="457" key="GridCell.Tab.0.bottom" timestamp="1604741548663">
-      <screen x="0" y="0" width="1920" height="1050" />
+    <state width="1493" height="341" key="GridCell.Tab.0.bottom" timestamp="1604854764969">
+      <screen x="0" y="0" width="1536" height="834" />
     </state>
     <state width="1493" height="487" key="GridCell.Tab.0.bottom/-1920.0.1536.840/0.0.1920.1050@-1920.0.1536.840" timestamp="1604587254687" />
-    <state width="1877" height="457" key="GridCell.Tab.0.bottom/-1920.0.1536.840/0.0.1920.1050@0.0.1920.1050" timestamp="1604741548663" />
-    <state width="1877" height="457" key="GridCell.Tab.0.bottom/0.0.1536.834@0.0.1536.834" timestamp="1604686315319" />
-    <state width="1877" height="457" key="GridCell.Tab.0.center" timestamp="1604741548663">
-      <screen x="0" y="0" width="1920" height="1050" />
+    <state width="1877" height="376" key="GridCell.Tab.0.bottom/-1920.0.1536.840/0.0.1920.1050@0.0.1920.1050" timestamp="1604848732634" />
+    <state width="1493" height="341" key="GridCell.Tab.0.bottom/0.0.1536.834@0.0.1536.834" timestamp="1604854764969" />
+    <state width="1493" height="341" key="GridCell.Tab.0.center" timestamp="1604854764968">
+      <screen x="0" y="0" width="1536" height="834" />
     </state>
     <state width="1493" height="487" key="GridCell.Tab.0.center/-1920.0.1536.840/0.0.1920.1050@-1920.0.1536.840" timestamp="1604587254686" />
-    <state width="1877" height="457" key="GridCell.Tab.0.center/-1920.0.1536.840/0.0.1920.1050@0.0.1920.1050" timestamp="1604741548663" />
-    <state width="1877" height="457" key="GridCell.Tab.0.center/0.0.1536.834@0.0.1536.834" timestamp="1604686315318" />
-    <state width="1877" height="457" key="GridCell.Tab.0.left" timestamp="1604741548663">
-      <screen x="0" y="0" width="1920" height="1050" />
+    <state width="1877" height="376" key="GridCell.Tab.0.center/-1920.0.1536.840/0.0.1920.1050@0.0.1920.1050" timestamp="1604848732634" />
+    <state width="1493" height="341" key="GridCell.Tab.0.center/0.0.1536.834@0.0.1536.834" timestamp="1604854764968" />
+    <state width="1493" height="341" key="GridCell.Tab.0.left" timestamp="1604854764968">
+      <screen x="0" y="0" width="1536" height="834" />
     </state>
     <state width="1493" height="487" key="GridCell.Tab.0.left/-1920.0.1536.840/0.0.1920.1050@-1920.0.1536.840" timestamp="1604587254685" />
-    <state width="1877" height="457" key="GridCell.Tab.0.left/-1920.0.1536.840/0.0.1920.1050@0.0.1920.1050" timestamp="1604741548663" />
-    <state width="1877" height="457" key="GridCell.Tab.0.left/0.0.1536.834@0.0.1536.834" timestamp="1604686315318" />
-    <state width="1877" height="457" key="GridCell.Tab.0.right" timestamp="1604741548663">
-      <screen x="0" y="0" width="1920" height="1050" />
+    <state width="1877" height="376" key="GridCell.Tab.0.left/-1920.0.1536.840/0.0.1920.1050@0.0.1920.1050" timestamp="1604848732633" />
+    <state width="1493" height="341" key="GridCell.Tab.0.left/0.0.1536.834@0.0.1536.834" timestamp="1604854764968" />
+    <state width="1493" height="341" key="GridCell.Tab.0.right" timestamp="1604854764968">
+      <screen x="0" y="0" width="1536" height="834" />
     </state>
     <state width="1493" height="487" key="GridCell.Tab.0.right/-1920.0.1536.840/0.0.1920.1050@-1920.0.1536.840" timestamp="1604587254687" />
-    <state width="1877" height="457" key="GridCell.Tab.0.right/-1920.0.1536.840/0.0.1920.1050@0.0.1920.1050" timestamp="1604741548663" />
-    <state width="1877" height="457" key="GridCell.Tab.0.right/0.0.1536.834@0.0.1536.834" timestamp="1604686315319" />
+    <state width="1877" height="376" key="GridCell.Tab.0.right/-1920.0.1536.840/0.0.1920.1050@0.0.1920.1050" timestamp="1604848732634" />
+    <state width="1493" height="341" key="GridCell.Tab.0.right/0.0.1536.834@0.0.1536.834" timestamp="1604854764968" />
     <state x="10" y="57" width="1474" height="710" key="SettingsEditor" timestamp="1600623297204">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
     <state x="10" y="57" width="1474" height="710" key="SettingsEditor/0.0.1536.834@0.0.1536.834" timestamp="1600623297204" />
-    <state x="552" y="258" key="Vcs.Push.Dialog.v2" timestamp="1604676070315">
-      <screen x="0" y="0" width="1920" height="1050" />
+    <state x="442" y="205" key="Vcs.Push.Dialog.v2" timestamp="1604748463511">
+      <screen x="0" y="0" width="1536" height="834" />
     </state>
     <state x="552" y="258" key="Vcs.Push.Dialog.v2/-1920.0.1536.840/0.0.1920.1050@0.0.1920.1050" timestamp="1604676070315" />
+    <state x="442" y="205" key="Vcs.Push.Dialog.v2/0.0.1536.834@0.0.1536.834" timestamp="1604748463511" />
     <state x="286" y="0" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1600096850918">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
     <state x="286" y="0" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.0.1536.834@0.0.1536.834" timestamp="1600096850918" />
-    <state x="539" y="195" width="840" height="854" key="search.everywhere.popup" timestamp="1604669542488">
+    <state x="539" y="195" width="840" height="854" key="search.everywhere.popup" timestamp="1604800563996">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
-    <state x="539" y="195" width="840" height="854" key="search.everywhere.popup/-1920.0.1536.840/0.0.1920.1050@0.0.1920.1050" timestamp="1604669542488" />
+    <state x="539" y="195" width="840" height="854" key="search.everywhere.popup/-1920.0.1536.840/0.0.1920.1050@0.0.1920.1050" timestamp="1604800563996" />
     <state x="431" y="155" width="672" height="678" key="search.everywhere.popup/0.0.1536.834@0.0.1536.834" timestamp="1600588931863" />
     <state x="491" y="329" key="vcs.readOnlyHandler.ReadOnlyStatusDialog" timestamp="1599292478107">
       <screen x="0" y="0" width="1536" height="834" />

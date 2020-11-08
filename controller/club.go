@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/tealeg/xlsx"
 	"net/http"
+	"net/url"
 	"os"
 	"path"
 	"strconv"
@@ -333,7 +334,10 @@ func GetUserResume(c *gin.Context) {
 		middleware.Log.Error(err.Error())
 	}
 
-	if resume, ok := model.QueryResume(userID, clubID); ok == true {
+	department := c.Query("department")
+	department, err = url.QueryUnescape(department)
+
+	if resume, ok := model.QueryResume(userID, clubID, department); ok == true {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 200,
 			"resume": gin.H{
@@ -696,7 +700,8 @@ func ClubGetNotice(c *gin.Context) {
 		middleware.Log.Error(err.Error())
 	}
 
-	department := c.Param("department")
+	department := c.Query("department")
+	department, err = url.QueryUnescape(department)
 
 	session := sessions.Default(c)
 	clubID := session.Get("club_id")

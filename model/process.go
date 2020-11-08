@@ -112,7 +112,7 @@ func OperateOnePerson(clubID int, userID int, pass int, department string) bool 
 func PassBatchInterviewee(batch []string, clubID int, progress int, department string) bool {
 
 	batchStr := strings.Join(batch, ",")
-	sql := fmt.Sprintf("UPDATE process SET result=1 WHERE club_id=%d and department=%s and progress=%d and user_id IN (%s);", clubID, department, progress, batchStr)
+	sql := fmt.Sprintf("UPDATE process SET result=1 WHERE club_id=%d and department='%s' and progress=%d and user_id IN (%s);", clubID, department, progress, batchStr)
 
 	if result := db.Exec(sql); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
