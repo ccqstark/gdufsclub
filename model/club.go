@@ -22,15 +22,16 @@ type Club struct {
 }
 
 type UserList struct {
+	ResumeID   int    `gorm:"column:resume_id"`
 	UserID     int    `gorm:"column:submitter_id"`
-	ClubID     int    `gorm:"column:club_id`
+	ClubID     int    `gorm:"column:club_id"`
 	Name       string `gorm:"column:name"`
 	Sex        string `gorm:"column:sex"`
 	Class      string `gorm:"column:class"`
 	Phone      string `gorm:"column:phone"`
 	Wechat     string `gorm:"column:wechat"`
 	Result     int    `gorm:"column:result"`
-	Department string `gorm:"column:department`
+	Department string `gorm:"column:department"`
 }
 
 type ClubAccount struct {
@@ -271,15 +272,16 @@ func QueryUserListBrief(clubID int, progress int) ([]UserList, bool) {
 
 	//基本信息: 姓名，性别，班级，手机号，微信号
 	var userList []UserList
-	var userIDArr []int
+	var resumeIDArr []int
 	type Parr struct {
 		ProcessID  int
+		ResumeID   int
 		UserID     int
 		Result     int
 		Department string
 	}
 	//先获取对应的用户的id
-	sql := "SELECT process_id,user_id,result,department FROM process WHERE club_id=? and progress=?"
+	sql := "SELECT process_id,resume_id,user_id,result,department FROM process WHERE club_id=? and progress=?"
 	var parr []Parr
 	if result := db.Raw(sql, clubID, progress).Scan(&parr); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
@@ -288,12 +290,12 @@ func QueryUserListBrief(clubID int, progress int) ([]UserList, bool) {
 
 	//转为id数组
 	for i := range parr {
-		userIDArr = append(userIDArr, parr[i].UserID)
+		resumeIDArr = append(resumeIDArr, parr[i].ResumeID)
 	}
 
 	//用用户id查询信息
-	sql = "SELECT submitter_id, club_id, name, sex, class, phone, wechat, department FROM resume WHERE club_id=? and submitter_id IN (?)"
-	if result := db.Raw(sql, clubID, userIDArr).Scan(&userList); result.Error != nil {
+	sql = "SELECT resume_id, submitter_id, club_id, name, sex, class, phone, wechat, department FROM resume WHERE resume_id IN (?)"
+	if result := db.Raw(sql, resumeIDArr).Scan(&userList); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return []UserList{}, false
 	}
@@ -301,7 +303,7 @@ func QueryUserListBrief(clubID int, progress int) ([]UserList, bool) {
 	//补充面试结果信息,部门
 	for i1 := range userList {
 		for i2 := range parr {
-			if userList[i1].UserID == parr[i2].UserID && userList[i1].Department == parr[i2].Department {
+			if userList[i1].ResumeID == parr[i2].ResumeID {
 				userList[i1].Result = parr[i2].Result
 			}
 		}

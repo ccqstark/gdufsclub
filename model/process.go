@@ -8,6 +8,7 @@ import (
 
 type Process struct {
 	ProcessID     int    `gorm:"primary_key"`
+	ResumeID      int    `gorm:"resume_id"`
 	UserID        int    `gorm:"user_id"`
 	ClubID        int    `gorm:"club_id"`
 	Department    string `gorm:"department"`
@@ -59,7 +60,7 @@ func QueryProcess(userID int) ([]Process, bool) {
 }
 
 //提交报名表时就创建面试进程
-func CreateProcess(userID int, clubID int, department string) bool {
+func CreateProcess(userID int, clubID int, department string, resumeID int) bool {
 
 	var process Process
 	if club, ok := QueryClubInfo(clubID); ok == true {
@@ -70,6 +71,7 @@ func CreateProcess(userID int, clubID int, department string) bool {
 		return false
 	}
 
+	process.ResumeID = resumeID
 	process.UserID = userID
 	process.ClubID = clubID
 	process.Progress = 1

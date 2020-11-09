@@ -100,10 +100,10 @@ func ResumeTwoInOne(c *gin.Context) {
 
 	//写入数据库
 	resume.Image = fileNameExt
-	if _, ok := model.InsertNewResume(&resume); ok == true {
+	if resumeID, ok := model.InsertNewResume(&resume); ok == true {
 
 		//创建面试进程
-		if okk := model.CreateProcess(userID, resume.ClubID, resume.Department); okk == false {
+		if okk := model.CreateProcess(userID, resume.ClubID, resume.Department, resumeID); okk == false {
 			c.JSON(http.StatusOK, gin.H{
 				"code": 400,
 				"msg":  "无法创建面试流程",
@@ -213,7 +213,7 @@ func FillNewResume(c *gin.Context) {
 	if resumeID, ok := model.InsertNewResume(&resume); ok == true {
 
 		//创建面试进程
-		if okk := model.CreateProcess(userID, resume.ClubID, resume.Department); okk == false {
+		if okk := model.CreateProcess(userID, resume.ClubID, resume.Department, resumeID); okk == false {
 			c.JSON(http.StatusOK, gin.H{
 				"code": 400,
 				"msg":  "无法创建面试流程",
