@@ -20,10 +20,10 @@ import (
 
 var Segmenter sego.Segmenter
 
-//func init() {
-//	// 载入词典
-//	Segmenter.LoadDictionary("./pkg/sego/data/dictionary.txt")
-//}
+func init() {
+	// 载入词典
+	Segmenter.LoadDictionary("./pkg/sego/data/dictionary.txt")
+}
 
 //社团注册二合一
 func RegisterClub(c *gin.Context) {
