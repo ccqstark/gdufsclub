@@ -384,7 +384,7 @@ func GetExcel(c *gin.Context) {
 		return
 	}
 
-	//获取此面所有通过者的user_id
+	//获取此面所有通过者的resume_id
 	passerID := model.QueryPasser(clubID.(int), progress)
 
 	//获取这些通过者的具体信息
@@ -436,6 +436,9 @@ func GetExcel(c *gin.Context) {
 	TakeOfficeCell := row.AddCell()
 	TakeOfficeCell.Value = "任职"
 
+	DepartmentCell := row.AddCell()
+	DepartmentCell.Value = "所报部门"
+
 	RemarksCell := row.AddCell()
 	RemarksCell.Value = "备注"
 
@@ -459,6 +462,8 @@ func GetExcel(c *gin.Context) {
 		wechatCell.Value = info.Wechat
 
 		newField := model.ParseField(info.Extra)
+		newField.TakeOffice = "会员"
+		newField.Remarks = ""
 
 		StudentNumberCell := row.AddCell()
 		StudentNumberCell.Value = newField.StudentNumber
@@ -471,6 +476,9 @@ func GetExcel(c *gin.Context) {
 
 		TakeOfficeCell := row.AddCell()
 		TakeOfficeCell.Value = newField.TakeOffice
+
+		DepartmentCell := row.AddCell()
+		DepartmentCell.Value = info.Department
 
 		RemarksCell := row.AddCell()
 		RemarksCell.Value = newField.Remarks
@@ -578,6 +586,9 @@ func GetExcelAll(c *gin.Context) {
 	TakeOfficeCell := row.AddCell()
 	TakeOfficeCell.Value = "任职"
 
+	DepartmentCell := row.AddCell()
+	DepartmentCell.Value = "所报部门"
+
 	RemarksCell := row.AddCell()
 	RemarksCell.Value = "备注"
 
@@ -601,6 +612,8 @@ func GetExcelAll(c *gin.Context) {
 		wechatCell.Value = info.Wechat
 
 		newField := model.ParseField(info.Extra)
+		newField.TakeOffice = "会员"
+		newField.Remarks = ""
 
 		StudentNumberCell := row.AddCell()
 		StudentNumberCell.Value = newField.StudentNumber
@@ -613,6 +626,9 @@ func GetExcelAll(c *gin.Context) {
 
 		TakeOfficeCell := row.AddCell()
 		TakeOfficeCell.Value = newField.TakeOffice
+
+		DepartmentCell := row.AddCell()
+		DepartmentCell.Value = info.Department
 
 		RemarksCell := row.AddCell()
 		RemarksCell.Value = newField.Remarks

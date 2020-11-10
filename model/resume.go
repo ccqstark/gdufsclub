@@ -35,11 +35,17 @@ func InsertNewResume(resume *Resume) (int, bool) {
 	}
 
 	//获取刚刚插入的记录的id
-	var _id []int
-	db.Raw("select LAST_INSERT_ID() as id").Pluck("id", &_id)
-	id := _id[0]
+	//var _id []int
+	//db.Raw("select LAST_INSERT_ID() as id").Pluck("id", &_id)
+	//id := _id[0]
 
-	return id, true
+	var newResume Resume
+	if result := db.Select("resume_id").Where("submitter_id=? and club_id=? and department=?", resume.SubmitterID, resume.ClubID, resume.Department).Take(&newResume); result.Error != nil {
+		middleware.Log.Error(result.Error.Error())
+		return 0, false
+	}
+
+	return newResume.ResumeID, true
 }
 
 func UpdateResumeProfile(id int, path string) bool {

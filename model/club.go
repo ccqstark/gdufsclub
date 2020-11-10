@@ -163,13 +163,13 @@ func QueryPasser(clubID int, progress int) []int {
 	var process []Process
 	var process2 []Process
 	if result := db.Where("club_ID=? and progress=? and result=?", clubID, progress, 1).
-		Select("user_id").Find(&process); result.Error != nil {
+		Select("resume_id").Find(&process); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return []int{}
 	}
 
 	if result := db.Where("club_ID=? and progress>?", clubID, progress).
-		Select("user_id").Find(&process2); result.Error != nil {
+		Select("resume_id").Find(&process2); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return []int{}
 	}
@@ -177,11 +177,11 @@ func QueryPasser(clubID int, progress int) []int {
 	var passerID []int
 
 	for _, pro := range process {
-		passerID = append(passerID, pro.UserID)
+		passerID = append(passerID, pro.ResumeID)
 	}
 
 	for _, pro := range process2 {
-		passerID = append(passerID, pro.UserID)
+		passerID = append(passerID, pro.ResumeID)
 	}
 
 	return passerID
@@ -192,7 +192,7 @@ func QueryAllPerson(clubID int, progress int) []int {
 
 	var process []Process
 	if result := db.Where("club_ID=? and progress>=?", clubID, progress).
-		Select("user_id").Find(&process); result.Error != nil {
+		Select("resume_id").Find(&process); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return []int{}
 	}
@@ -200,17 +200,17 @@ func QueryAllPerson(clubID int, progress int) []int {
 	//用于存储所有人的id
 	var personID []int
 	for _, pro := range process {
-		personID = append(personID, pro.UserID)
+		personID = append(personID, pro.ResumeID)
 	}
 
 	return personID
 }
 
 //通过ID数组批量获取用户提交的报名表上的信息
-func GainInfoByArray(clubID int, userID []int) ([]Resume, bool) {
+func GainInfoByArray(clubID int, ResumeID []int) ([]Resume, bool) {
 
 	var resumeArr []Resume
-	if result := db.Where("club_id=? and submitter_id IN (?)", clubID, userID).
+	if result := db.Where("club_id=? and resume_id IN (?)", clubID, ResumeID).
 		Find(&resumeArr); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return []Resume{}, false
@@ -294,8 +294,8 @@ func QueryUserListBrief(clubID int, progress int) ([]UserList, bool) {
 	}
 
 	//用用户id查询信息
-	sql = "SELECT resume_id, submitter_id, club_id, name, sex, class, phone, wechat, department FROM resume WHERE resume_id IN (?)"
-	if result := db.Raw(sql, resumeIDArr).Scan(&userList); result.Error != nil {
+	sql = "SELECT resume_id, submitter_id, club_id, name, sex, class, phone, wechat, department FROM resume WHERE club_id=? and resume_id IN (?)"
+	if result := db.Raw(sql, clubID, resumeIDArr).Scan(&userList); result.Error != nil {
 		middleware.Log.Error(result.Error.Error())
 		return []UserList{}, false
 	}
@@ -330,10 +330,6 @@ func ParseField(str string) NewField {
 			newField.PoliticsStatus = valueArr[i]
 		case "所在校区":
 			newField.Campus = valueArr[i]
-		case "任职":
-			newField.TakeOffice = valueArr[i]
-		case "备注":
-			newField.Remarks = valueArr[i]
 		}
 	}
 
