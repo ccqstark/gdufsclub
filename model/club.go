@@ -150,7 +150,7 @@ func SearchByWord(cutWord []string) []Club {
 	var clubSegment []Club
 	var clubGather []Club
 	for _, word := range cutWord {
-		db.Select("club_id,club_name,total_progress,logo").Where("club_name like ? and pass=?", "%"+word+"%", 1).Find(&clubSegment)
+		db.Select("club_id,club_name,total_progress,logo, department").Where("club_name like ? and pass=?", "%"+word+"%", 1).Find(&clubSegment)
 		clubGather = append(clubGather, clubSegment...)
 	}
 
@@ -319,6 +319,9 @@ func ParseField(str string) NewField {
 
 	keyArr := strings.Split(strArr[0], ",")
 	valueArr := strings.Split(strArr[1], "**")
+
+	fmt.Println(strArr[0])
+	fmt.Println(strArr[1])
 
 	newField := NewField{}
 

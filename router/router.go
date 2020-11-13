@@ -138,6 +138,9 @@ func LoadRouter() *gin.Engine {
 			v1Process.GET("", controller.GetProcess)
 			v1Process.PUT("/result", controller.OperateOne)
 			v1Process.PUT("/batch", controller.PassBatch)
+
+			v1Process.GET("/offer", controller.GetOfferProcess)
+			v1Process.PUT("/offer", controller.ReceiveOffer)
 		}
 
 		//evaluate

@@ -123,3 +123,35 @@ func PassBatchInterviewee(batch []string, clubID int, progress int, department s
 
 	return true
 }
+
+//获取用户所有被录取的社团
+func QueryOfferProcess(userID int) ([]Process, bool) {
+
+	var allProcess []Process
+	if result := db.Where("user_id = ?", userID).Find(&allProcess); result.Error != nil {
+		middleware.Log.Error(result.Error.Error())
+		return []Process{}, false
+	}
+
+	var offerProcess []Process
+	var club Club
+	for _, v := range allProcess {
+		db.Select("progress").Where("club_id = ?", v.ClubID).Take(&club)
+		if v.Progress == club.TotalProgress+1 {
+			offerProcess = append(offerProcess, v)
+		}
+	}
+
+	return offerProcess, true
+}
+
+//接收或不接收offer
+func ReceiveOffer(processID int, pass int) bool {
+
+	if result := db.Model(Process{}).Where("process_id=?", processID).Update("result", pass); result.Error != nil {
+		middleware.Log.Error(result.Error.Error())
+		return false
+	}
+
+	return true
+}
