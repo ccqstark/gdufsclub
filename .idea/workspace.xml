@@ -27,11 +27,10 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eb5e9959-3a0d-4446-a66b-62daa4faaf44" name="Default Changelist" comment="上线">
+    <list default="true" id="eb5e9959-3a0d-4446-a66b-62daa4faaf44" name="Default Changelist" comment="新增功能：用户反选">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/controller/process.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/process.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dao/DB.go" beforeDir="false" afterPath="$PROJECT_DIR$/dao/DB.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/club.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/club.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/process.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/process.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/router/router.go" beforeDir="false" afterPath="$PROJECT_DIR$/router/router.go" afterDir="false" />
     </list>
@@ -169,7 +168,8 @@
     <MESSAGE value="fix resume_id bug" />
     <MESSAGE value="预备上线" />
     <MESSAGE value="上线" />
-    <option name="LAST_COMMIT_MESSAGE" value="上线" />
+    <MESSAGE value="新增功能：用户反选" />
+    <option name="LAST_COMMIT_MESSAGE" value="新增功能：用户反选" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
@@ -195,38 +195,38 @@
       <screen x="0" y="0" width="1536" height="834" />
     </state>
     <state x="583" y="321" key="GrepConsoleSound/0.0.1536.834@0.0.1536.834" timestamp="1598955165459" />
-    <state width="1877" height="305" key="GridCell.Tab.0.bottom" timestamp="1605200884082">
-      <screen x="0" y="0" width="1536" height="834" />
+    <state width="1877" height="371" key="GridCell.Tab.0.bottom" timestamp="1605533341200">
+      <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state width="1493" height="487" key="GridCell.Tab.0.bottom/-1920.0.1536.840/0.0.1920.1050@-1920.0.1536.840" timestamp="1604587254687" />
-    <state width="1877" height="305" key="GridCell.Tab.0.bottom/-1920.0.1536.840/0.0.1920.1050@0.0.1920.1050" timestamp="1605188893014" />
+    <state width="1877" height="371" key="GridCell.Tab.0.bottom/-1920.0.1536.840/0.0.1920.1050@0.0.1920.1050" timestamp="1605533341200" />
     <state width="1877" height="305" key="GridCell.Tab.0.bottom/0.0.1536.834@0.0.1536.834" timestamp="1605200884082" />
-    <state width="1877" height="305" key="GridCell.Tab.0.center" timestamp="1605200884082">
-      <screen x="0" y="0" width="1536" height="834" />
+    <state width="1877" height="371" key="GridCell.Tab.0.center" timestamp="1605533341199">
+      <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state width="1493" height="487" key="GridCell.Tab.0.center/-1920.0.1536.840/0.0.1920.1050@-1920.0.1536.840" timestamp="1604587254686" />
-    <state width="1877" height="305" key="GridCell.Tab.0.center/-1920.0.1536.840/0.0.1920.1050@0.0.1920.1050" timestamp="1605188893014" />
+    <state width="1877" height="371" key="GridCell.Tab.0.center/-1920.0.1536.840/0.0.1920.1050@0.0.1920.1050" timestamp="1605533341199" />
     <state width="1877" height="305" key="GridCell.Tab.0.center/0.0.1536.834@0.0.1536.834" timestamp="1605200884082" />
-    <state width="1877" height="305" key="GridCell.Tab.0.left" timestamp="1605200884082">
-      <screen x="0" y="0" width="1536" height="834" />
+    <state width="1877" height="371" key="GridCell.Tab.0.left" timestamp="1605533341199">
+      <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state width="1493" height="487" key="GridCell.Tab.0.left/-1920.0.1536.840/0.0.1920.1050@-1920.0.1536.840" timestamp="1604587254685" />
-    <state width="1877" height="305" key="GridCell.Tab.0.left/-1920.0.1536.840/0.0.1920.1050@0.0.1920.1050" timestamp="1605188893013" />
+    <state width="1877" height="371" key="GridCell.Tab.0.left/-1920.0.1536.840/0.0.1920.1050@0.0.1920.1050" timestamp="1605533341199" />
     <state width="1877" height="305" key="GridCell.Tab.0.left/0.0.1536.834@0.0.1536.834" timestamp="1605200884082" />
-    <state width="1877" height="305" key="GridCell.Tab.0.right" timestamp="1605200884082">
-      <screen x="0" y="0" width="1536" height="834" />
+    <state width="1877" height="371" key="GridCell.Tab.0.right" timestamp="1605533341199">
+      <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state width="1493" height="487" key="GridCell.Tab.0.right/-1920.0.1536.840/0.0.1920.1050@-1920.0.1536.840" timestamp="1604587254687" />
-    <state width="1877" height="305" key="GridCell.Tab.0.right/-1920.0.1536.840/0.0.1920.1050@0.0.1920.1050" timestamp="1605188893014" />
+    <state width="1877" height="371" key="GridCell.Tab.0.right/-1920.0.1536.840/0.0.1920.1050@0.0.1920.1050" timestamp="1605533341199" />
     <state width="1877" height="305" key="GridCell.Tab.0.right/0.0.1536.834@0.0.1536.834" timestamp="1605200884082" />
     <state x="10" y="57" width="1474" height="710" key="SettingsEditor" timestamp="1600623297204">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
     <state x="10" y="57" width="1474" height="710" key="SettingsEditor/0.0.1536.834@0.0.1536.834" timestamp="1600623297204" />
-    <state x="552" y="258" key="Vcs.Push.Dialog.v2" timestamp="1605017993895">
+    <state x="552" y="258" key="Vcs.Push.Dialog.v2" timestamp="1605274935343">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
-    <state x="552" y="258" key="Vcs.Push.Dialog.v2/-1920.0.1536.840/0.0.1920.1050@0.0.1920.1050" timestamp="1605017993895" />
+    <state x="552" y="258" key="Vcs.Push.Dialog.v2/-1920.0.1536.840/0.0.1920.1050@0.0.1920.1050" timestamp="1605274935343" />
     <state x="442" y="205" key="Vcs.Push.Dialog.v2/0.0.1536.834@0.0.1536.834" timestamp="1604945424260" />
     <state x="286" y="0" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1600096850918">
       <screen x="0" y="0" width="1536" height="834" />

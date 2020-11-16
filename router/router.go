@@ -12,8 +12,8 @@ import (
 func LoadRouter() *gin.Engine {
 
 	//Release版本
-	//gin.SetMode(gin.ReleaseMode)
-	gin.SetMode(gin.DebugMode)
+	gin.SetMode(gin.ReleaseMode)
+	//gin.SetMode(gin.DebugMode)
 
 	r := gin.Default()
 

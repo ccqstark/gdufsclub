@@ -136,7 +136,7 @@ func QueryOfferProcess(userID int) ([]Process, bool) {
 	var offerProcess []Process
 	var club Club
 	for _, v := range allProcess {
-		db.Select("progress").Where("club_id = ?", v.ClubID).Take(&club)
+		db.Select("total_progress").Where("club_id = ?", v.ClubID).Take(&club)
 		if v.Progress == club.TotalProgress+1 {
 			offerProcess = append(offerProcess, v)
 		}
@@ -154,4 +154,15 @@ func ReceiveOffer(processID int, pass int) bool {
 	}
 
 	return true
+}
+
+func QueryClubIDByProcessID(processID int) int {
+
+	var process Process
+	if result := db.Select("club_id").Where("process_id = ?", processID).Take(&process); result.Error != nil {
+		middleware.Log.Error(result.Error.Error())
+		return 0
+	}
+
+	return process.ClubID
 }

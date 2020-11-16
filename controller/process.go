@@ -178,8 +178,8 @@ func ReceiveOffer(c *gin.Context) {
 	if pass == 1 {
 		//大于2个判断
 		offerNum := 0
+		var offerClubID []int
 		if offerList, ok := model.QueryOfferProcess(userID); ok == true {
-			var offerClubID []int
 			for _, v := range offerList {
 				if v.Result == 1 { //拿到offer
 					flag := 0
@@ -197,8 +197,18 @@ func ReceiveOffer(c *gin.Context) {
 			}
 		}
 
+		//现在要接收的是否为之前接收过offer的社团
+		oldClubOffer := 0
+		nowClubID := model.QueryClubIDByProcessID(processID)
+		for _, v := range offerClubID {
+			if v == nowClubID {
+				oldClubOffer = 1
+				break
+			}
+		}
+
 		//已经2个了
-		if offerNum == 2 {
+		if offerNum == 2 && oldClubOffer == 0 {
 			c.JSON(http.StatusOK, gin.H{
 				"code": 400,
 				"msg":  "最多只能选择2个社团",
